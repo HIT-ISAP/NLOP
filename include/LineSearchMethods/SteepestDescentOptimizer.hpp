@@ -76,6 +76,7 @@ public:
             }
             if (f->getJacobian().norm() < sd_params->min_gradient)
             {
+                std::cout << "Iteration times: " << sd_params->iteration_times << std::endl;
                 this->printResult();
                 return f->getX();
             }
@@ -90,7 +91,7 @@ public:
 
                 stepsize = stepsize_searcher->search();
                 f->setX(f->getX() + stepsize * (-(f->getJacobian()).transpose()));
-                // this->printProcessInformation();
+                //this->printProcessInformation();
             }
         }
     }

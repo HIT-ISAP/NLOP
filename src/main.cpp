@@ -55,7 +55,7 @@ using namespace NLOP;
 
 int main()
 {
-    /*
+/*
     // Steepest Descent Optimization Test
     RosenbrockFunctor* f = new RosenbrockFunctor;
     SteepestDescentParams* params= new SteepestDescentParams;
@@ -70,6 +70,7 @@ int main()
     ConjuateGradientParams* params = new ConjuateGradientParams;
     Eigen::Vector2d Initial_x(0, 0);
     ConjuateGradientOptimizer<double, 2, RosenbrockFunctor, PhiFunctor> optimizer;
+    params->setApproximateMethod("PR");
     optimizer.init(Initial_x, f, params);
     optimizer.optimize();
 

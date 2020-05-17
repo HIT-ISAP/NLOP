@@ -21,6 +21,8 @@ protected:
     using LineSearch::stepsize;
     using typename LineSearch::InputType;
 
+    using JacobianType = typename Functor<T, N>::JacobianType;
+
 public:
     /// @brief Constructors
     ConjuateGradientOptimizer() {}
@@ -35,7 +37,7 @@ public:
         this->updateValue();
         this->cg_params = params;
 
-        // stepsize_searcher = new GoldSectionMethod<T, PhiFunctortype>;
+        stepsize_searcher = new GoldSectionMethod<T, PhiFunctortype>;
         /*
         /// Initial stepsize search method
         switch (this->params->stepsize_search_method) {
@@ -63,11 +65,60 @@ public:
         std::cout << "Initial Configurations: " << "\n"
                   << "x0: (" << f->getX().transpose() << ") \n"
                   << "f(x0) = " << f->getY() << std::endl;
+        while (true){
+            this->updateValueAndJacobian();
+            if (cg_params->iteration_times > cg_params->max_iteration_times)
+            {
+                std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
+                this->printResult();
+                return f->getX();
+            }
+            if (f->getJacobian().norm() < cg_params->min_gradient)
+            {
+                std::cout << "Iteration times: " << cg_params->iteration_times << std::endl;
+                this->printResult();
+                return f->getX();
+            }
+            else
+            {
+                cg_params->iteration_times++;
+
+                stepsize_searcher->init();
+
+                g = f->getJacobian();
+                if (cg_params->iteration_times == 1)
+                {
+                    beta = 0;
+                    last_d.setZero(1, N);
+                    last_g.setZero(1, N);
+                }
+                else
+                {
+                    beta = (g*g.transpose()/(last_g*last_g.transpose()))(0,0);
+                }
+
+                d = -g + beta*last_d;
+                stepsize_searcher->phi.setP(f->getX());
+                stepsize_searcher->phi.setJ(-d);
+
+                stepsize = stepsize_searcher->search();
+                f->setX(f->getX() + stepsize * d.transpose());
+
+                last_g = g;
+                last_d = d;
+                //this->printProcessInformation();
+            }
+        }
 
     }
 
     ConjuateGradientParams* cg_params;
+    JacobianType last_g ;
+    JacobianType g;
+    JacobianType d;
+    JacobianType last_d;
 
+    T beta = 0;
 };
 }
 

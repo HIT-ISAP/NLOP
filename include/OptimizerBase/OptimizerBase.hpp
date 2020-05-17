@@ -7,7 +7,6 @@
 #include <OneDimensionalSearch/FibonacciMethod.hpp>
 #include <OneDimensionalSearch/GoldenSectionMethod.hpp>
 
-
 #include <iostream>
 
 #include <OptimizerParams/OptimizerParamsBase.hpp>
