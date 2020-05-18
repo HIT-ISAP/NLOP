@@ -1,7 +1,7 @@
 #ifndef BISECTIONMETHOD_HPP
 #define BISECTIONMETHOD_HPP
 
-#include <OneDimensionalSearch/OneDimensionalSearchMethods.hpp>
+#include <StepsizeSearch/Accurate/AccurateSearchBase.hpp>
 
 namespace NLOP {
 
@@ -9,17 +9,17 @@ namespace NLOP {
 /// @brief Bisection method for derivable functions
 /// @param T The numeric scalar type
 template<typename T>
-class BisectionMethod: public OneDimSearch
+class BisectionMethod: public AccurateSearchBase
 {
 protected:
 
-    using OneDimSearch::alpha;
-    using OneDimSearch::beta;
-    using OneDimSearch::epsilon;
-    using OneDimSearch::lambda;
-    using OneDimSearch::iteration_times;
-    using OneDimSearch::max_iteration_times;
-    using OneDimSearch::phi;
+    using AccurateSearchBase::alpha;
+    using AccurateSearchBase::beta;
+    using AccurateSearchBase::epsilon;
+    using AccurateSearchBase::lambda;
+    using AccurateSearchBase::iteration_times;
+    using AccurateSearchBase::max_iteration_times;
+    using AccurateSearchBase::phi;
 public:
     T search() override
     {

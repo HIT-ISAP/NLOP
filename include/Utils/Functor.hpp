@@ -17,6 +17,7 @@ public:
     using InputType = Eigen::Matrix<T, N, 1>;
     using ValueType = Eigen::Matrix<T, 1, 1>;
     using JacobianType = Eigen::Matrix<T, 1, N>;
+    using Scalar = T;
 
     enum{
         InputsAtCompileTime = InputType::RowsAtCompileTime,

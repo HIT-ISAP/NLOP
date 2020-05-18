@@ -17,6 +17,12 @@ struct RosenbrockFunctor: public NLOP::Functor<double, 2>
     {
         (*v)[0] = (1 - x[0])*(1 - x[0]) + 100*(x[1] - x[0]*x[0])*(x[1] - x[0]*x[0]);
     }
+
+    double operator ()(const InputType& x)
+    {
+        double result = (1 - x[0])*(1 - x[0]) + 100*(x[1] - x[0]*x[0])*(x[1] - x[0]*x[0]);
+        return result;
+    }
 };
 
 struct PhiFunctor: public NLOP::Functor<double, 1>
@@ -55,7 +61,8 @@ using namespace NLOP;
 
 int main()
 {
-/*
+
+    /*
     // Steepest Descent Optimization Test
     RosenbrockFunctor* f = new RosenbrockFunctor;
     SteepestDescentParams* params= new SteepestDescentParams;

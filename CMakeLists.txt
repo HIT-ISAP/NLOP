@@ -19,17 +19,17 @@ set(HEADERS
     include/Utils/Utils.hpp
     include/Utils/Functor.hpp
 
-    # Optimizer Base
-    include/OptimizerBase/OptimizerBase.hpp
-    include/OptimizerBase/LineSearchOptimizer.hpp
-    include/OptimizerBase/TrustRegionOptimizer.hpp
-
     #Optimizer Params
     include/OptimizerParams/OptimizerParamsBase.hpp
     include/OptimizerParams/LineSearchParams.hpp
     include/OptimizerParams/TrustRegionParams.hpp
     include/OptimizerParams/SteepestDescentParams.hpp
     include/OptimizerParams/ConjuateGradientParams.hpp
+
+    # Optimizer Base
+    include/OptimizerBase/OptimizerBase.hpp
+    include/OptimizerBase/LineSearchOptimizer.hpp
+    include/OptimizerBase/TrustRegionOptimizer.hpp
 
     # Line Search Methods
     include/LineSearchMethods/CyclicCoordinateOptimizer.hpp
@@ -41,13 +41,21 @@ set(HEADERS
     include/TrustRegionMethods/LevenbergMarquardtOptimizer.hpp
 
     # One Dimensional Search Methods
-    include/OneDimensionalSearch/OneDimensionalSearchMethods.hpp
+    include/StepsizeSearch/Accurate/AccurateSearchBase.hpp
+    include/StepsizeSearch/Inaccurate/InaccurateSearchBase.hpp
 
-    include/OneDimensionalSearch/GoldenSectionMethod.hpp
-    include/OneDimensionalSearch/FibonacciMethod.hpp
-    include/OneDimensionalSearch/BisectionMethod.hpp
-    include/OneDimensionalSearch/DichotomousMethod.hpp
-    include/OneDimensionalSearch/NewtonMethod.hpp
+    # Accurate stepsize search
+    include/StepsizeSearch/Accurate/GoldenSectionMethod.hpp
+    include/StepsizeSearch/Accurate/FibonacciMethod.hpp
+    include/StepsizeSearch/Accurate/BisectionMethod.hpp
+    include/StepsizeSearch/Accurate/DichotomousMethod.hpp
+    include/StepsizeSearch/Accurate/NewtonMethod.hpp
+
+    # Inaccurate stepsize search
+    include/StepsizeSearch/Inaccurate/InaccurateSearchBase.hpp
+    include/StepsizeSearch/Inaccurate/GoldsteinMethod.hpp
+    include/StepsizeSearch/Inaccurate/ArmijoMethod.hpp
+    include/StepsizeSearch/Inaccurate/WolfePowellMethod.hpp
     )
 
 # Examples

@@ -2,6 +2,10 @@
 #define LINESEARCH_HPP
 
 #include <OptimizerBase/OptimizerBase.hpp>
+#include <StepsizeSearch/Accurate/DichotomousMethod.hpp>
+#include <StepsizeSearch/Accurate/FibonacciMethod.hpp>
+#include <StepsizeSearch/Accurate/GoldenSectionMethod.hpp>
+#include <StepsizeSearch/Inaccurate/GoldsteinMethod.hpp>
 
 namespace NLOP {
 
@@ -25,7 +29,8 @@ public:
     }
 
 protected:
-    OneDimSearch<T, PhiFunctortype>* stepsize_searcher; // Stepsize search method
+    AccurateSearchBase<T, PhiFunctortype>* stepsize_searcher; // Stepsize search method
+    InaccurateSearchBase<FunctorType>* inaccurate_stepsize;
 
     T stepsize; // Stepsize for one iteration
 

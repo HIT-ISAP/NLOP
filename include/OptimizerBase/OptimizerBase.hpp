@@ -1,12 +1,6 @@
 #ifndef OPTIMIZERBASE_HPP
 #define OPTIMIZERBASE_HPP
 
-
-//#include <OneDimensionalSearch/BisectionMethod.hpp>
-#include <OneDimensionalSearch/DichotomousMethod.hpp>
-#include <OneDimensionalSearch/FibonacciMethod.hpp>
-#include <OneDimensionalSearch/GoldenSectionMethod.hpp>
-
 #include <iostream>
 
 #include <OptimizerParams/OptimizerParamsBase.hpp>
@@ -34,7 +28,7 @@ public:
     }
 
     /// @brief Initialize target function f(), variable x
-    ///        Choose one of the one dimensional search method (default = GoldenSection)
+    ///        Choose one of the stepsize search method (default = GoldenSection)
     void init(const InputType& initial, FunctorType* f,
                       OptimizerParamsBase* params)
     {

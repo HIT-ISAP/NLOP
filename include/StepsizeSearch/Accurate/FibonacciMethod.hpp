@@ -1,7 +1,7 @@
 #ifndef FIBONACCIMETHOD_HPP
 #define FIBONACCIMETHOD_HPP
 
-#include <OneDimensionalSearch/OneDimensionalSearchMethods.hpp>
+#include <StepsizeSearch/Accurate/AccurateSearchBase.hpp>
 #include <Utils/Utils.hpp>
 
 namespace NLOP {
@@ -10,16 +10,16 @@ namespace NLOP {
 /// @brief Fibonacci method (t = 0.618)
 /// @param T The numeric scalar type
 template<typename T, typename FunctorType>
-class FibonacciMethod: public OneDimSearch<T, FunctorType>
+class FibonacciMethod: public AccurateSearchBase<T, FunctorType>
 {
 protected:
-    using OneDimSearch<T, FunctorType>::alpha;
-    using OneDimSearch<T, FunctorType>::beta;
-    using OneDimSearch<T, FunctorType>::epsilon;
-    using OneDimSearch<T, FunctorType>::lambda;
-    using OneDimSearch<T, FunctorType>::iteration_times;
-    using OneDimSearch<T, FunctorType>::max_iteration_times;
-    using OneDimSearch<T, FunctorType>::phi;
+    using AccurateSearchBase<T, FunctorType>::alpha;
+    using AccurateSearchBase<T, FunctorType>::beta;
+    using AccurateSearchBase<T, FunctorType>::epsilon;
+    using AccurateSearchBase<T, FunctorType>::lambda;
+    using AccurateSearchBase<T, FunctorType>::iteration_times;
+    using AccurateSearchBase<T, FunctorType>::max_iteration_times;
+    using AccurateSearchBase<T, FunctorType>::phi;
 public:
     T search() override
     {

@@ -1,7 +1,7 @@
 #ifndef GOLDENSECTIONMETHOD_HPP
 #define GOLDENSECTIONMETHOD_HPP
 
-#include <OneDimensionalSearch/OneDimensionalSearchMethods.hpp>
+#include <StepsizeSearch/Accurate/AccurateSearchBase.hpp>
 
 namespace NLOP {
 
@@ -10,16 +10,16 @@ namespace NLOP {
 /// @param T The numeric scalar type
 
 template<typename T, typename FunctorType>
-class GoldSectionMethod: public OneDimSearch<T, FunctorType>
+class GoldSectionMethod: public AccurateSearchBase<T, FunctorType>
 {
 protected:
-    using OneDimSearch<T, FunctorType>::alpha;
-    using OneDimSearch<T, FunctorType>::beta;
-    using OneDimSearch<T, FunctorType>::epsilon;
-    using OneDimSearch<T, FunctorType>::lambda;
-    using OneDimSearch<T, FunctorType>::iteration_times;
-    using OneDimSearch<T, FunctorType>::max_iteration_times;
-    using OneDimSearch<T, FunctorType>::phi;
+    using AccurateSearchBase<T, FunctorType>::alpha;
+    using AccurateSearchBase<T, FunctorType>::beta;
+    using AccurateSearchBase<T, FunctorType>::epsilon;
+    using AccurateSearchBase<T, FunctorType>::lambda;
+    using AccurateSearchBase<T, FunctorType>::iteration_times;
+    using AccurateSearchBase<T, FunctorType>::max_iteration_times;
+    using AccurateSearchBase<T, FunctorType>::phi;
 
 public:
     /// @brief Use Golden Section Method to search the optimal stepsize

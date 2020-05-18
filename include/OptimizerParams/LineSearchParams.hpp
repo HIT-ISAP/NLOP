@@ -2,7 +2,7 @@
 #define LINESEARCHPARAMS_HPP
 
 #include <OptimizerParams/OptimizerParamsBase.hpp>
-#include <OneDimensionalSearch/OneDimensionalSearchMethods.hpp>
+#include <StepsizeSearch/Accurate/AccurateSearchBase.hpp>
 
 
 namespace NLOP {

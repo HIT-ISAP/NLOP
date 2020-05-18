@@ -1,7 +1,7 @@
 #ifndef DICHOTOMOUSMETHOD_HPP
 #define DICHOTOMOUSMETHOD_HPP
 
-#include <OneDimensionalSearch/OneDimensionalSearchMethods.hpp>
+#include <StepsizeSearch/Accurate/AccurateSearchBase.hpp>
 
 namespace NLOP {
 
@@ -9,16 +9,16 @@ namespace NLOP {
 /// @brief Dichotomous Method for General Continues Functions
 /// @param T the numberic scalar type
 template<typename T, typename FunctorType>
-class DichotomousMethod: public OneDimSearch<T, FunctorType>
+class DichotomousMethod: public AccurateSearchBase<T, FunctorType>
 {
 protected:
-    using OneDimSearch<T, FunctorType>::alpha;
-    using OneDimSearch<T, FunctorType>::beta;
-    using OneDimSearch<T, FunctorType>::epsilon;
-    using OneDimSearch<T, FunctorType>::lambda;
-    using OneDimSearch<T, FunctorType>::iteration_times;
-    using OneDimSearch<T, FunctorType>::max_iteration_times;
-    using OneDimSearch<T, FunctorType>::phi;
+    using AccurateSearchBase<T, FunctorType>::alpha;
+    using AccurateSearchBase<T, FunctorType>::beta;
+    using AccurateSearchBase<T, FunctorType>::epsilon;
+    using AccurateSearchBase<T, FunctorType>::lambda;
+    using AccurateSearchBase<T, FunctorType>::iteration_times;
+    using AccurateSearchBase<T, FunctorType>::max_iteration_times;
+    using AccurateSearchBase<T, FunctorType>::phi;
 public:
     T search() override
     {
