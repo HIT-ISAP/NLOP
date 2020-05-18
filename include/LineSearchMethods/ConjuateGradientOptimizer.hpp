@@ -9,21 +9,25 @@ namespace NLOP {
 /// @brief Conjuate gradient method optimizer
 /// @param T The numeric scalar type
 /// @param N The dimension of variable x
-template<typename T, int N, typename FunctorType, typename PhiFunctortype>
-class ConjuateGradientOptimizer: public LineSearchOptimizer<T, N, FunctorType, PhiFunctortype>
+template<typename FunctorType>
+class ConjuateGradientOptimizer: public LineSearchOptimizer<FunctorType>
 {
 protected:
-    using LineSearch = LineSearchOptimizer<T, N, FunctorType, PhiFunctortype>;
-
-    using LineSearch::f;
-    using LineSearch::params;
-    using LineSearch::stepsize_searcher;
-    using LineSearch::stepsize;
-    using LineSearch::inaccurate_stepsize;
+    using LineSearch = LineSearchOptimizer<FunctorType>;
 
     using typename LineSearch::InputType;
+    using typename LineSearch::ValueType;
+    using typename LineSearch::JacobianType;
+    using typename LineSearch::T;
 
-    using JacobianType = typename Functor<T, N>::JacobianType;
+    using LineSearch::f;
+    using LineSearch::ss;
+
+    using LineSearch::stepsize;
+    using LineSearch::d;
+    //using InputType::RowsAtCompileTime;
+
+    //using LineSearch::Base::InputsAtCompileTime;
 
 public:
     /// @brief Constructors
@@ -32,146 +36,73 @@ public:
     ~ConjuateGradientOptimizer() {}
 
     /// @brief Initialize
-    void init(const InputType& initial, FunctorType* f, ConjuateGradientParams* params)
+    void init(const InputType& initial, FunctorType* f,
+              ConjuateGradientParams* params, StepsizeSearchBase<FunctorType>* ss)
     {
         this->f = f;
         this->f->setX(initial);
         this->updateValue();
-        this->cg_params = params;
+        this->params = params;
+        this->ss = ss;
+        this->ss->init(this->f);
 
-        stepsize_searcher = new GoldSectionMethod<T, PhiFunctortype>;
-        inaccurate_stepsize = new GoldsteinMethod<FunctorType>;
-        /*
-        /// Initial stepsize search method
-        switch (this->params->stepsize_search_method) {
-        case SteepestDescentParams::GOLDENSECTION:
-            stepsize_searcher = new GoldSectionMethod<T, FunctorType>;
-            break;
-        case SteepestDescentParams::DICHOTOMOUS:
-            stepsize_searcher = new DichotomousMethod<T, FunctorType>;
-            break;
-        case SteepestDescentParams::NEWTON:
-            /// TODO
-            break;
-        case SteepestDescentParams::FIBONACCI:
-            stepsize_searcher = new FibonacciMethod<T, FunctorType>;
-            break;
-        default:
-            break;
-        }
-        */
+        beta = 0;
+        last_d.setZero(1, InputType::RowsAtCompileTime);
+        last_g.setZero(1, InputType::RowsAtCompileTime);
     }
 
     /// @brief Conjuate Gradient optimization process
     InputType optimize() override
     {
-        std::cout << "Initial Configurations: " << "\n"
-                  << "x0: (" << f->getX().transpose() << ") \n"
-                  << "f(x0) = " << f->getY() << std::endl;
+        this->printInitialConfigurations();
         while (true){
             this->updateValueAndJacobian();
-            if (cg_params->iteration_times > cg_params->max_iteration_times)
+            if (params->iteration_times > params->max_iteration_times)
             {
                 std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
                 this->printResult();
                 return f->getX();
             }
-            if (f->getJacobian().norm() < cg_params->min_gradient)
+            if (f->getJacobian().norm() < params->min_gradient)
             {
-                std::cout << "Iteration times: " << cg_params->iteration_times << std::endl;
+                std::cout << "Iteration times: " << params->iteration_times << std::endl;
                 this->printResult();
                 return f->getX();
             }
             else
             {
-                cg_params->iteration_times++;
-
-                inaccurate_stepsize->f = this->f;
+                params->iteration_times++;
 
                 g = f->getJacobian();
-                if (cg_params->iteration_times == 1)
-                {
-                    beta = 0;
-                    last_d.setZero(1, N);
-                    last_g.setZero(1, N);
-                }
-                else
-                {
-                    beta = (g*g.transpose()/(last_g*last_g.transpose()))(0,0);
-                }
 
+                // Compute beta
+                if (params->iteration_times == 1)
+                    beta = 0;
+                else
+                    beta = (g*g.transpose()/(last_g*last_g.transpose()))(0,0);
+
+                // Update the direction of descent d
                 d = -g + beta*last_d;
 
-                stepsize = inaccurate_stepsize->search(d);
+                // Search stepsize at the direction of d
+                stepsize = ss->search(d);
 
                 f->setX(f->getX() + stepsize * d.transpose());
 
+                // save gradient and direction at last time
                 last_g = g;
                 last_d = d;
+
                 //this->printProcessInformation();
             }
         }
 
     }
-    /*
-    InputType optimize() override
-    {
-        std::cout << "Initial Configurations: " << "\n"
-                  << "x0: (" << f->getX().transpose() << ") \n"
-                  << "f(x0) = " << f->getY() << std::endl;
-        while (true){
-            this->updateValueAndJacobian();
-            if (cg_params->iteration_times > cg_params->max_iteration_times)
-            {
-                std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
-                this->printResult();
-                return f->getX();
-            }
-            if (f->getJacobian().norm() < cg_params->min_gradient)
-            {
-                std::cout << "Iteration times: " << cg_params->iteration_times << std::endl;
-                this->printResult();
-                return f->getX();
-            }
-            else
-            {
-                cg_params->iteration_times++;
 
-                stepsize_searcher->init();
-
-                g = f->getJacobian();
-                if (cg_params->iteration_times == 1)
-                {
-                    beta = 0;
-                    last_d.setZero(1, N);
-                    last_g.setZero(1, N);
-                }
-                else
-                {
-                    beta = (g*g.transpose()/(last_g*last_g.transpose()))(0,0);
-                }
-
-                d = -g + beta*last_d;
-                stepsize_searcher->phi.setP(f->getX());
-                stepsize_searcher->phi.setJ(-d);
-
-                stepsize = stepsize_searcher->search();
-                f->setX(f->getX() + stepsize * d.transpose());
-
-                last_g = g;
-                last_d = d;
-                //this->printProcessInformation();
-            }
-        }
-
-    }
-    */
-
-    ConjuateGradientParams* cg_params;
-    JacobianType last_g ;
-    JacobianType g;
-    JacobianType d;
-    JacobianType last_d;
+    ConjuateGradientParams* params;
+    JacobianType last_g ; // gradient at last time
+    JacobianType g; // gradient at recent time
+    JacobianType last_d; // direction at last time
 
     T beta = 0;
 };

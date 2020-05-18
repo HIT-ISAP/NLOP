@@ -10,93 +10,77 @@ namespace NLOP {
 /// @brief Steepest descent method optimizer
 /// @param T The numeric scalar type
 /// @param N The dimension of variable x
-template<typename T, int N, typename FunctorType, typename PhiFunctortype>
-class SteepestDescentOptimizer: public LineSearchOptimizer<T, N, FunctorType, PhiFunctortype>
+template<typename FunctorType>
+class SteepestDescentOptimizer: public LineSearchOptimizer<FunctorType>
 {
 protected:
-    using LineSearch = LineSearchOptimizer<T, N, FunctorType, PhiFunctortype>;
+    using LineSearch = LineSearchOptimizer<FunctorType>;
+
+    using typename LineSearch::InputType;
+    using typename LineSearch::ValueType;
+    using typename LineSearch::JacobianType;
+    using typename LineSearch::T;
 
     using LineSearch::f;
-    using LineSearch::params;
-    using LineSearch::stepsize_searcher;
+    using LineSearch::ss;
+
     using LineSearch::stepsize;
-    using typename LineSearch::InputType;
+    using LineSearch::d;
+
 
 public:
     /// @brief Constructors
     SteepestDescentOptimizer() {}
 
-
     ~SteepestDescentOptimizer() {}
 
     /// @brief Initialize SteepestDescentOptimizer
-    void init(const InputType& initial, FunctorType* f, SteepestDescentParams* params)
+    void init(const InputType& initial, FunctorType* f,
+              SteepestDescentParams* params, StepsizeSearchBase<FunctorType>* ss)
     {
         this->f = f;
         this->f->setX(initial);
         this->updateValue();
-        this->sd_params = params;
-
-        stepsize_searcher = new GoldSectionMethod<T, PhiFunctortype>;
-        /*
-        /// Initial stepsize search method
-        switch (this->params->stepsize_search_method) {
-        case SteepestDescentParams::GOLDENSECTION:
-            stepsize_searcher = new GoldSectionMethod<T, FunctorType>;
-            break;
-        case SteepestDescentParams::DICHOTOMOUS:
-            stepsize_searcher = new DichotomousMethod<T, FunctorType>;
-            break;
-        case SteepestDescentParams::NEWTON:
-            /// TODO
-            break;
-        case SteepestDescentParams::FIBONACCI:
-            stepsize_searcher = new FibonacciMethod<T, FunctorType>;
-            break;
-        default:
-            break;
-        }
-        */
+        this->params = params;
+        this->ss = ss;
+        this->ss->init(this->f);
     }
 
     /// @brief Steepest Descent optimization process
     InputType optimize() override
     {
-        //sd_params->print();
-        std::cout << "Initial Configurations: " << "\n"
-                  << "x0: (" << f->getX().transpose() << ") \n"
-                  << "f(x0) = " << f->getY() << std::endl;
-        // stepsize_searcher->print();
+        this->printInitialConfigurations();
         while (true) {
             this->updateValueAndJacobian();
-            if (sd_params->iteration_times > sd_params->max_iteration_times)
+            if (params->iteration_times > params->max_iteration_times)
             {
                 std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
                 return f->getX();
             }
-            if (f->getJacobian().norm() < sd_params->min_gradient)
+            if (f->getJacobian().norm() < params->min_gradient)
             {
-                std::cout << "Iteration times: " << sd_params->iteration_times << std::endl;
+                std::cout << "Iteration times: " << params->iteration_times << std::endl;
                 this->printResult();
                 return f->getX();
             }
             else
             {
-                sd_params->iteration_times++;
+                params->iteration_times++;
 
-                stepsize_searcher->init();
+                // The direction of descent is negative gradient
+                d = -f->getJacobian();
 
-                stepsize_searcher->phi.setP(f->getX());
-                stepsize_searcher->phi.setJ(f->getJacobian());
+                // Search stepsize at the direction of d
+                stepsize = ss->search(d);
 
-                stepsize = stepsize_searcher->search();
-                f->setX(f->getX() + stepsize * (-(f->getJacobian()).transpose()));
+                // Update x: x(k+1) = x(k) + stepsize(k) * d(k)
+                f->setX(f->getX() + stepsize * d.transpose());
                 //this->printProcessInformation();
             }
         }
     }
 
-    SteepestDescentParams* sd_params;
+    SteepestDescentParams* params;
 };
 }
 

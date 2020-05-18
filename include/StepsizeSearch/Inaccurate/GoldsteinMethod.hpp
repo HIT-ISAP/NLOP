@@ -9,6 +9,7 @@ template<typename FunctorType>
 class GoldsteinMethod: public InaccurateSearchBase<FunctorType>
 {
 protected:
+    /*
     using InaccurateSearchBase<FunctorType>::alpha;
     using InaccurateSearchBase<FunctorType>::beta;
     using InaccurateSearchBase<FunctorType>::lambda;
@@ -18,6 +19,20 @@ protected:
     using typename InaccurateSearchBase<FunctorType>::T;
     using typename InaccurateSearchBase<FunctorType>::InputType;
     using typename InaccurateSearchBase<FunctorType>::JacobianType;
+    */
+
+    using InaccurateBase = InaccurateSearchBase<FunctorType>;
+    using typename InaccurateBase::T;
+    using typename InaccurateBase::InputType;
+    using typename InaccurateBase::ValueType;
+    using typename InaccurateBase::JacobianType;
+
+    using InaccurateBase::alpha;
+    using InaccurateBase::beta;
+    using InaccurateBase::lambda;
+    using InaccurateBase::iteration_times;
+    using InaccurateBase::max_iteration_times;
+    using InaccurateBase::f;
 
 public:
 
@@ -31,7 +46,7 @@ public:
     /// @param f Target function
     /// @param alpha Increase factor
     /// @param beta Decrease factor
-    void init(FunctorType* f, T alpha = 1.5, T beta = 0.5, T max_lambda = 1)
+    void init(FunctorType* f) override
     {
         this->f = f;
         this->alpha = alpha;

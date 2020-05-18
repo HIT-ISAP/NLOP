@@ -2,36 +2,44 @@
 #define LINESEARCH_HPP
 
 #include <OptimizerBase/OptimizerBase.hpp>
+
 #include <StepsizeSearch/Accurate/DichotomousMethod.hpp>
 #include <StepsizeSearch/Accurate/FibonacciMethod.hpp>
 #include <StepsizeSearch/Accurate/GoldenSectionMethod.hpp>
+
 #include <StepsizeSearch/Inaccurate/GoldsteinMethod.hpp>
 
 namespace NLOP {
 
 /// @class NLOP::LineSearchOptimizer
 /// @brief Abstract base class for all line search methods
-/// @param T The numeric scalar type
-/// @param N The dimension of variable x
-template<typename T, int N, typename FunctorType, typename PhiFunctortype>
-class LineSearchOptimizer: public OptimizerBase<T, N, FunctorType>
+/// @param FunctorType Target function type
+template<typename FunctorType>
+class LineSearchOptimizer: public OptimizerBase<FunctorType>
 {
 protected:
-    using Base = OptimizerBase<T, N, FunctorType>;
-    using Base::f;
-    using Base::params;
+    using Base = OptimizerBase<FunctorType>;
+
+    using typename Base::T;
+
     using typename Base::InputType;
+    using typename Base::ValueType;
+    using typename Base::JacobianType;
+
+    using Base::f;
+    //using Base::params;
 
 public:
     virtual ~LineSearchOptimizer()
     {
-        delete stepsize_searcher;
+        //delete stepsize_searcher;
     }
 
 protected:
-    AccurateSearchBase<T, PhiFunctortype>* stepsize_searcher; // Stepsize search method
-    InaccurateSearchBase<FunctorType>* inaccurate_stepsize;
-
+    //AccurateSearchBase<FunctorType>* stepsize_searcher; // Stepsize search method
+    //InaccurateSearchBase<FunctorType>* inaccurate_stepsize;
+    StepsizeSearchBase<FunctorType>* ss; // Stepsize searcher
+    JacobianType d; //The direction of descent
     T stepsize; // Stepsize for one iteration
 
 };

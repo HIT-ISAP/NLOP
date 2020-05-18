@@ -2,46 +2,36 @@
 #define OPTIMIZERBASE_HPP
 
 #include <iostream>
-
 #include <OptimizerParams/OptimizerParamsBase.hpp>
+#include <StepsizeSearch/StepsizeSearchBase.hpp>
 
 namespace NLOP {
 
 /// @class NLOP::OptimizerBase
 /// @brief Abstract base class for all non-linear optimization methods
-/// @param T The numeric scalar type
-/// @param N The dimension of variable x
-template<typename T, int N, typename FunctorType>
+/// @param FunctorType Target function type
+template<typename FunctorType>
 class OptimizerBase
 {
-public:
-    using InputType = typename Eigen::Matrix<T, N, 1>;
+protected:
+    using T = typename FunctorType::Scalar;
+    using InputType = typename FunctorType::InputType;
     using ValueType = typename FunctorType::ValueType;
+    using JacobianType = typename FunctorType::JacobianType;
+
+    //using FunctorType::InputsAtCompileTime;
+
 public:
     /// TODO: assert the dimension is correct
 
-    /// Constructor
-    OptimizerBase()
-    {
-        f = new FunctorType;
-        params = new OptimizerParamsBase;
-    }
 
-    /// @brief Initialize target function f(), variable x
-    ///        Choose one of the stepsize search method (default = GoldenSection)
-    void init(const InputType& initial, FunctorType* f,
-                      OptimizerParamsBase* params)
-    {
-        this->f = f;
-        this->f->setX(initial);
-        this->params = params;
-    }
-
+    /// @brief Update y with recent x
     void updateValue()
     {
         adjac(f->x, f->y);
     }
 
+    /// @brief Update y and jacobian with recent x
     void updateValueAndJacobian()
     {
         adjac(f->x, f->y, f->jacobian);
@@ -67,19 +57,21 @@ public:
     /// @brief Iteratively compute the optimal x
     virtual InputType optimize() = 0;
 
+    void printInitialConfigurations()
+    {
+        std::cout << "Initial Configurations: " << "\n"
+                  << "x0: (" << f->getX().transpose() << ") \n"
+                  << "f(x0) = " << f->getY() << std::endl;
+    }
+
     virtual ~OptimizerBase()
     {
         delete f;
-        delete params;
     }
 
 protected:
     FunctorType* f; // Target function
-
-    OptimizerParamsBase* params; // Optimizer parameters
-
-    // Tool to compute value and jacobian
-    Eigen::AutoDiffJacobian<FunctorType> adjac;
+    Eigen::AutoDiffJacobian<FunctorType> adjac; // Tool to compute value and jacobian
 
 };
 }

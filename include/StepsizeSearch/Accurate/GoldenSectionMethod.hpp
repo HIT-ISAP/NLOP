@@ -7,56 +7,64 @@ namespace NLOP {
 
 /// @class NLOP::GoldSectionMethod
 /// @brief Golden Section Method (t = 0.618)
-/// @param T The numeric scalar type
-
-template<typename T, typename FunctorType>
-class GoldSectionMethod: public AccurateSearchBase<T, FunctorType>
+/// @param FunctorType Target function
+template<typename FunctorType>
+class GoldSectionMethod: public AccurateSearchBase<FunctorType>
 {
 protected:
-    using AccurateSearchBase<T, FunctorType>::alpha;
-    using AccurateSearchBase<T, FunctorType>::beta;
-    using AccurateSearchBase<T, FunctorType>::epsilon;
-    using AccurateSearchBase<T, FunctorType>::lambda;
-    using AccurateSearchBase<T, FunctorType>::iteration_times;
-    using AccurateSearchBase<T, FunctorType>::max_iteration_times;
-    using AccurateSearchBase<T, FunctorType>::phi;
+    using AccurateBase = AccurateSearchBase<FunctorType>;
+    using typename AccurateBase::T;
+    using typename AccurateBase::InputType;
+    using typename AccurateBase::ValueType;
+    using typename AccurateBase::JacobianType;
+
+    using AccurateBase::alpha;
+    using AccurateBase::beta;
+    using AccurateBase::epsilon;
+    using AccurateBase::lambda;
+
+    using AccurateBase::iteration_times;
+    using AccurateBase::max_iteration_times;
+    using AccurateBase::f;
 
 public:
-    /// @brief Use Golden Section Method to search the optimal stepsize
-    T search() override
+    void printProcess() override
     {
-        double t = 0.618; // reduction ratio
+        std::cout << "interative times: " << iteration_times
+                  << "  " << "[alpha, lambda, mu, beta]: "
+                  << "[" << alpha << ", " << lambda << ", "
+                  << mu << ", " << beta << "]" << std::endl;
+    }
+    /// @brief Use Golden Section Method to search the optimal stepsize
+    T search(JacobianType& d) override
+    {
+        //double t = 0.618; // reduction ratio
         lambda = alpha + (1 - t) * (beta - alpha);
         mu = alpha + t * (beta - alpha);
-        while (true) {
-
-            /*
-            std::cout << "interative times: " << iteration_times << "  "
-                 << "  " << "[alpha, lambda, mu, beta]: "
-                 << "[" << alpha << ", " << lambda << ", "
-                 << mu << ", " << beta << "]" << std::endl;
-                 */
-
-            /// stoping condition: (alpha - beta) < epsilon
+        while (true)
+        {
+            //this->printProcess();
+            // Stoping condition: (alpha - beta) < epsilon
             if ((beta - alpha) < epsilon)
             {
-                //std::cout << "Finished! Optimal lambda: "
-                //          << (alpha + beta)/2 << std::endl;
-
-                return (alpha + beta)/2;
+                auto stepsize = (alpha + beta)/2;
+                //std::cout << "Finished! Optimal lambda: " << stepsize << std::endl;
+                this->reset(); // Reset alpha, beta for next searching
+                return stepsize;
             }
             iteration_times++;
 
-            if (phi(lambda) > phi(mu))
+            // If f(x + lambda*d) > f(x + mu*d)
+            if ((*f)(f->getX()+lambda*d.transpose()) > (*f)(f->getX()+mu*d.transpose()))
             {
-                /// cut the interval [alpha, lambda)
+                // Cut the interval [alpha, lambda)
                 alpha = lambda;
                 lambda = mu;
                 mu = alpha + t * (beta - alpha);
             }
             else
             {
-                /// cut the interval (mu, beta]
+                // Cut the interval (mu, beta]
                 beta = mu;
                 mu = lambda;
                 lambda = alpha + (1 - t) * (beta - alpha);
@@ -66,7 +74,7 @@ public:
 
 private:
     T mu;
-
+    T t = 0.618; // reduction ratio
 };
 
 }

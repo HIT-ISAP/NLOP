@@ -44,6 +44,9 @@ set(HEADERS
     include/StepsizeSearch/Accurate/AccurateSearchBase.hpp
     include/StepsizeSearch/Inaccurate/InaccurateSearchBase.hpp
 
+    # Stepsize search base
+    include/StepsizeSearch/StepsizeSearchBase.hpp
+
     # Accurate stepsize search
     include/StepsizeSearch/Accurate/GoldenSectionMethod.hpp
     include/StepsizeSearch/Accurate/FibonacciMethod.hpp

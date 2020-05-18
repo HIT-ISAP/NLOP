@@ -7,7 +7,7 @@ namespace NLOP {
 
 /// @class NLOP::BisectionMethod
 /// @brief Bisection method for derivable functions
-/// @param T The numeric scalar type
+/// @param FunctorType Target function
 template<typename T>
 class BisectionMethod: public AccurateSearchBase
 {

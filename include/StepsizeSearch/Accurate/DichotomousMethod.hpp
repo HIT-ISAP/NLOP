@@ -7,48 +7,68 @@ namespace NLOP {
 
 /// @class NLOP::Dichotomous Method
 /// @brief Dichotomous Method for General Continues Functions
-/// @param T the numberic scalar type
-template<typename T, typename FunctorType>
-class DichotomousMethod: public AccurateSearchBase<T, FunctorType>
+/// @param FunctorType Target function
+template<typename FunctorType>
+class DichotomousMethod: public AccurateSearchBase<FunctorType>
 {
 protected:
-    using AccurateSearchBase<T, FunctorType>::alpha;
-    using AccurateSearchBase<T, FunctorType>::beta;
-    using AccurateSearchBase<T, FunctorType>::epsilon;
-    using AccurateSearchBase<T, FunctorType>::lambda;
-    using AccurateSearchBase<T, FunctorType>::iteration_times;
-    using AccurateSearchBase<T, FunctorType>::max_iteration_times;
-    using AccurateSearchBase<T, FunctorType>::phi;
+    using AccurateBase = AccurateSearchBase<FunctorType>;
+    using typename AccurateBase::T;
+    using typename AccurateBase::InputType;
+    using typename AccurateBase::ValueType;
+    using typename AccurateBase::JacobianType;
+
+    using AccurateBase::alpha;
+    using AccurateBase::beta;
+    using AccurateBase::epsilon;
+    using AccurateBase::lambda;
+
+    using AccurateBase::iteration_times;
+    using AccurateBase::max_iteration_times;
+    using AccurateBase::f;
+
 public:
-    T search() override
+    void printProcess() override
     {
+        std::cout << "interative times: " << iteration_times
+                  << "  " << "[alpha, lambda, mu, beta]: "
+                  << "[" << alpha << ", " << lambda << ", "
+                  << mu << ", " << beta << "]" << std::endl;
+    }
+
+    T search(JacobianType& d) override
+    {
+        epsilon = 0.0005;
+        lambda = (alpha + beta)/2 - epsilon;
+        mu = (alpha + beta)/2 + epsilon;
+
+        max_iteration_times = int(std::log2((beta - alpha)/epsilon));
+
         while (true)
         {
-            lambda = (alpha + beta)/2 - epsilon;
-            mu = (alpha + beta)/2 + epsilon;
-            std::cout << "interative times: " << iteration_times
-                      << "  " << "[alpha, lambda, mu, beta]: "
-                      << "[" << alpha << ", " << lambda << ", "
-                      << mu << ", " << beta << "]" << std::endl;
+            //this->printProcess();
 
-            /// stoping condition: (alpha - beta) < 2*epsilon or reach max iteration times
-            if (beta - alpha < 2*epsilon || iteration_times == max_iteration_times)
+            // Stoping condition: (alpha - beta) < 2*epsilon or reach max iteration times
+            if (iteration_times == max_iteration_times)
             {
-                std::cout << "Finished! Optimal lambda: "
-                          << lambda << std::endl;
-                return lambda;
+                auto result = lambda;
+                //std::cout << "Finished! Optimal lambda: " << result << std::endl;
+                this->reset();
+                return result;
             }
             iteration_times++;
-            if (phi(mu) > phi(lambda))
+
+            // If f(x + lambda*d) < f(x + mu*d)
+            if ((*f)(f->getX()+lambda*d.transpose()) < (*f)(f->getX()+mu*d.transpose()))
             {
-                /// cut the right half of the interval
+                // Cut the right half of the interval
                 beta = mu;
                 lambda = (alpha + beta)/2 - epsilon;
                 mu = (alpha + beta)/2 + epsilon;
             }
             else
             {
-                /// cut the left half of the interval
+                // Cut the left half of the interval
                 alpha = lambda;
                 lambda = (alpha + beta)/2 - epsilon;
                 mu = (alpha + beta)/2 + epsilon;
@@ -58,8 +78,6 @@ public:
 
 protected:
     T mu;
-
-
 };
 
 }
