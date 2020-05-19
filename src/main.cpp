@@ -37,7 +37,9 @@ int main()
     //auto ss = new FibonacciMethod<RosenbrockFunctor>;
     //auto ss = new DichotomousMethod<RosenbrockFunctor>;
 
-    auto ss = new GoldsteinMethod<RosenbrockFunctor>;
+    //auto ss = new GoldsteinMethod<RosenbrockFunctor>;
+    auto ss = new ArmijoMethod<RosenbrockFunctor>;
+    //auto ss = new WolfePowellMethod<RosenbrockFunctor>;
 
     //SteepestDescentOptimizer<RosenbrockFunctor> optimizer;
     //SteepestDescentParams* params= new SteepestDescentParams;

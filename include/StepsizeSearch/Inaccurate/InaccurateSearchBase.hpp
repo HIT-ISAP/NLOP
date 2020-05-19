@@ -18,24 +18,25 @@ public:
     using typename Base::ValueType;
     using typename Base::JacobianType;
 
-    using typename Base::iteration_times;
-    using typename Base::max_iteration_times;
-    using typename Base::f;
+    using Base::iteration_times;
+    using Base::max_iteration_times;
+    using Base::f;
 
-    /// @brief Constructor
-    // InaccurateSearchBase() {}
+    void reset()
+    {
+        iteration_times = 0;
+    }
 
-    /// @brief Iteratively search the inaccurate stepsize
-    // virtual T search(JacobianType& d) = 0;
+    void printResult()
+    {
+        std::cout << "Inaccurate stepsize: " << lambda << std::endl;
+        std::cout << "Iteration times: " << iteration_times << std::endl;
+    }
 
     //FunctorType* f; // Target function
     T alpha = 1.5; // Increase factor
     T beta = 0.5; // Decrease factor
     T lambda; // Stepsize
-
-    //int iteration_times = 0;
-    //int max_iteration_times = 10;
-
 };
 }
 

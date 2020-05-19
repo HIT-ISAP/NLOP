@@ -9,18 +9,6 @@ template<typename FunctorType>
 class GoldsteinMethod: public InaccurateSearchBase<FunctorType>
 {
 protected:
-    /*
-    using InaccurateSearchBase<FunctorType>::alpha;
-    using InaccurateSearchBase<FunctorType>::beta;
-    using InaccurateSearchBase<FunctorType>::lambda;
-    using InaccurateSearchBase<FunctorType>::iteration_times;
-    using InaccurateSearchBase<FunctorType>::max_iteration_times;
-    using InaccurateSearchBase<FunctorType>::f;
-    using typename InaccurateSearchBase<FunctorType>::T;
-    using typename InaccurateSearchBase<FunctorType>::InputType;
-    using typename InaccurateSearchBase<FunctorType>::JacobianType;
-    */
-
     using InaccurateBase = InaccurateSearchBase<FunctorType>;
     using typename InaccurateBase::T;
     using typename InaccurateBase::InputType;
@@ -30,11 +18,14 @@ protected:
     using InaccurateBase::alpha;
     using InaccurateBase::beta;
     using InaccurateBase::lambda;
+
     using InaccurateBase::iteration_times;
     using InaccurateBase::max_iteration_times;
     using InaccurateBase::f;
 
 public:
+    /// @brief Constructor
+    GoldsteinMethod() {}
 
     /// @brief Set rho
     void setRho(T new_value)
@@ -44,8 +35,6 @@ public:
 
     /// @brief Initialization for stepsize search
     /// @param f Target function
-    /// @param alpha Increase factor
-    /// @param beta Decrease factor
     void init(FunctorType* f) override
     {
         this->f = f;
@@ -67,10 +56,14 @@ public:
                 std::cerr << "Beyong the max iteration times!" << std::endl;
                 return lambda;
             }
+            iteration_times++;
 
             lhs = (*f)(f->getX()+lambda*d.transpose()) - f->getY();
 
             rhs1 = (rho * f->getJacobian() * d.transpose() * lambda)(0,0);
+
+            // Condition (1): f(x(k+1)) - f(x(k)) <= rho * J(x(k)) * lambda * d
+            // Condition (2): f(x(k+1)) - f(x(k)) >= (1 - rho) * J(x(k)) * lambda * d
 
             // If condition (1) is satisfied
             if (lhs <= rhs1)
@@ -80,7 +73,8 @@ public:
                 // If condition (1) and (2) are satisfied simultaneously, stop
                 if (lhs >= rhs2)
                 {
-                    // std::cout << "Inaccurate stepsize: " << lambda << std::endl;
+                    //this->printResult();
+                    this->reset();
                     return lambda;
                 }
                 else

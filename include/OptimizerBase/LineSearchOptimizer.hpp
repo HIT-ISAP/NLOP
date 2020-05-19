@@ -8,6 +8,8 @@
 #include <StepsizeSearch/Accurate/GoldenSectionMethod.hpp>
 
 #include <StepsizeSearch/Inaccurate/GoldsteinMethod.hpp>
+#include <StepsizeSearch/Inaccurate/ArmijoMethod.hpp>
+#include <StepsizeSearch/Inaccurate/WolfePowellMethod.hpp>
 
 namespace NLOP {
 

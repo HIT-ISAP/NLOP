@@ -33,7 +33,7 @@ public:
     FunctorType* f; // Target function
 
     int iteration_times = 0;
-    int max_iteration_times = 100;
+    int max_iteration_times = 20;
 };
 }
 
