@@ -2,6 +2,12 @@
 #include <Utils/Functor.hpp>
 #include <LineSearchMethods/SteepestDescentOptimizer.hpp>
 #include <LineSearchMethods/ConjuateGradientOptimizer.hpp>
+#include <LineSearchMethods/MomentumOptimizer.hpp>
+#include <LineSearchMethods/NesterovMomentumOptimizer.hpp>
+#include <LineSearchMethods/AdagradOptimizer.hpp>
+#include <LineSearchMethods/RMSPropOptimizer.hpp>
+#include <LineSearchMethods/AdaDeltaOptimizer.hpp>
+#include <LineSearchMethods/AdamOptimizer.hpp>
 
 using namespace std;
 
@@ -38,19 +44,41 @@ int main()
     //auto ss = new DichotomousMethod<RosenbrockFunctor>;
 
     //auto ss = new GoldsteinMethod<RosenbrockFunctor>;
-    auto ss = new ArmijoMethod<RosenbrockFunctor>;
+    //auto ss = new ArmijoMethod<RosenbrockFunctor>;
     //auto ss = new WolfePowellMethod<RosenbrockFunctor>;
 
     //SteepestDescentOptimizer<RosenbrockFunctor> optimizer;
     //SteepestDescentParams* params= new SteepestDescentParams;
 
-    ConjuateGradientOptimizer<RosenbrockFunctor> optimizer;
-    ConjuateGradientParams* params = new ConjuateGradientParams;
+    //ConjuateGradientOptimizer<RosenbrockFunctor> optimizer;
+    //ConjuateGradientParams* params = new ConjuateGradientParams;
 
-    optimizer.init(initial_x, f, params, ss);
+    //MomentumOptimizer<RosenbrockFunctor> optimizer;
+    //MomentumParams* params = new MomentumParams;
+    //optimizer.init(initial_x, f, params);
+
+    //NesterovMomentumOptimizer<RosenbrockFunctor> optimizer;
+    //NesterovMomentumParams* params = new NesterovMomentumParams;
+    //optimizer.init(initial_x, f, params);
+
+    //AdagradOptimizer<RosenbrockFunctor> optimizer;
+    //AdagradParams* params = new AdagradParams;
+    //optimizer.init(initial_x, f, params);
+
+    //RMSPropOptimizer<RosenbrockFunctor> optimizer;
+    //RMSPropParams* params = new RMSPropParams;
+    //optimizer.init(initial_x, f, params);
+
+    AdaDeltaOptimizer<RosenbrockFunctor> optimizer;
+    AdaDeltaParams* params = new AdaDeltaParams;
+    optimizer.init(initial_x, f, params);
+
+    //AdamOptimizer<RosenbrockFunctor> optimizer;
+    //AdamParams* params = new AdamParams;
+    //optimizer.init(initial_x, f, params);
+
+    //optimizer.init(initial_x, f, params, ss);
     optimizer.optimize();
-
-
 
     return 0;
 }

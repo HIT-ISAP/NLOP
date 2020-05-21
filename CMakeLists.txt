@@ -19,12 +19,20 @@ set(HEADERS
     include/Utils/Utils.hpp
     include/Utils/Functor.hpp
 
-    #Optimizer Params
+    #Optimizer Params Base
     include/OptimizerParams/OptimizerParamsBase.hpp
     include/OptimizerParams/LineSearchParams.hpp
     include/OptimizerParams/TrustRegionParams.hpp
+
+    #Line search method params
     include/OptimizerParams/SteepestDescentParams.hpp
     include/OptimizerParams/ConjuateGradientParams.hpp
+    include/OptimizerParams/MomentumParams.hpp
+    include/OptimizerParams/NesterovMomentumParams.hpp
+    include/OptimizerParams/AdagradParams.hpp
+    include/OptimizerParams/RMSPropParams.hpp
+    include/OptimizerParams/AdaDeltaParams.hpp
+    include/OptimizerParams/AdamParams.hpp
 
     # Optimizer Base
     include/OptimizerBase/OptimizerBase.hpp
@@ -36,6 +44,12 @@ set(HEADERS
     include/LineSearchMethods/SteepestDescentOptimizer.hpp
     include/LineSearchMethods/NewtonOptimizer.hpp
     include/LineSearchMethods/ConjuateGradientOptimizer.hpp
+    include/LineSearchMethods/MomentumOptimizer.hpp
+    include/LineSearchMethods/NesterovMomentumOptimizer.hpp
+    include/LineSearchMethods/AdagradOptimizer.hpp
+    include/LineSearchMethods/RMSPropOptimizer.hpp
+    include/LineSearchMethods/AdaDeltaOptimizer.hpp
+    include/LineSearchMethods/AdamOptimizer.hpp
 
     # Trust Region Methods
     include/TrustRegionMethods/LevenbergMarquardtOptimizer.hpp

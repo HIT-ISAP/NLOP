@@ -7,8 +7,7 @@
 namespace NLOP {
 /// @class ConjuateGradientOptimizer
 /// @brief Conjuate gradient method optimizer
-/// @param T The numeric scalar type
-/// @param N The dimension of variable x
+/// @param FunctorType Target function type
 template<typename FunctorType>
 class ConjuateGradientOptimizer: public LineSearchOptimizer<FunctorType>
 {
@@ -25,9 +24,6 @@ protected:
 
     using LineSearch::stepsize;
     using LineSearch::d;
-    //using InputType::RowsAtCompileTime;
-
-    //using LineSearch::Base::InputsAtCompileTime;
 
 public:
     /// @brief Constructors
@@ -100,9 +96,9 @@ public:
     }
 
     ConjuateGradientParams* params;
-    JacobianType last_g ; // gradient at last time
-    JacobianType g; // gradient at recent time
-    JacobianType last_d; // direction at last time
+    JacobianType last_g ; // gradient at time k-1
+    JacobianType g; // gradient at time k
+    JacobianType last_d; // direction at time k-1
 
     T beta = 0;
 };
