@@ -6,7 +6,6 @@
 #include <StepsizeSearch/StepsizeSearchBase.hpp>
 
 namespace NLOP {
-
 /// @class NLOP::OptimizerBase
 /// @brief Abstract base class for all non-linear optimization methods
 /// @param FunctorType Target function type

@@ -12,7 +12,6 @@
 #include <StepsizeSearch/Inaccurate/WolfePowellMethod.hpp>
 
 namespace NLOP {
-
 /// @class NLOP::LineSearchOptimizer
 /// @brief Abstract base class for all line search methods
 /// @param FunctorType Target function type
@@ -29,7 +28,6 @@ protected:
     using typename Base::JacobianType;
 
     using Base::f;
-    //using Base::params;
 
 public:
     virtual ~LineSearchOptimizer()

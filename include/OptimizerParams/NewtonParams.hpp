@@ -1,3 +1,6 @@
+#ifndef NEWTONPARAMS_HPP
+#define NEWTONPARAMS_HPP
+
 #include <OptimizerParams/LineSearchParams.hpp>
 
 namespace NLOP {
@@ -12,3 +15,5 @@ public:
     double min_delta_x = 0.01; // Gradient threshold to stop the iterations
 };
 }
+
+#endif

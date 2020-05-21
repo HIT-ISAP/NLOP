@@ -8,6 +8,7 @@ namespace NLOP {
 /// @class NewtonOptimizer
 /// @brief Newton method optimizer
 /// @param FunctorType Target function type
+/// @param HessianFunctorType mammal Hessian functor of target function
 template<typename FunctorType, typename HessianFunctorType>
 class NewtonOptimizer: public LineSearchOptimizer<FunctorType>
 {
@@ -25,6 +26,7 @@ public:
     /// @brief Constructors
     NewtonOptimizer() {}
 
+    /// @brief Initialization
     void init(const InputType& initial, FunctorType* f,
               NewtonParams* params)
     {
@@ -48,12 +50,12 @@ public:
             else
             {
                 params->iteration_times++;
-                this->printProcessInformation();
+                //this->printProcessInformation();
 
                 x = f->getX();
                 g = f->getJacobian();
 
-                auto h = H(x);
+                //auto h = H(x);
 
                 delta_x = H(x).inverse() * g.transpose();
 

@@ -10,6 +10,7 @@
 #include <LineSearchMethods/AdamOptimizer.hpp>
 #include <LineSearchMethods/HookeJeevesOptimizer.hpp>
 #include <LineSearchMethods/NewtonOptimizer.hpp>
+#include <TrustRegionMethods/LevenbergMarquardtOptimizer.hpp>
 
 using namespace std;
 
@@ -123,8 +124,12 @@ int main()
     //HookeJeevesParams* params = new HookeJeevesParams;
     //optimizer.init(initial_x, f, params);
 
-    NewtonOptimizer<RosenbrockFunctor, RosenbrockHessianFunctor> optimizer;
-    NewtonParams* params = new NewtonParams;
+    //NewtonOptimizer<RosenbrockFunctor, RosenbrockHessianFunctor> optimizer;
+    //NewtonParams* params = new NewtonParams;
+    //optimizer.init(initial_x, f, params);
+
+    LevenbergMarquardtOptimizer<RosenbrockFunctor, RosenbrockHessianFunctor> optimizer;
+    LevenbergMarquardtParams* params = new LevenbergMarquardtParams;
     optimizer.init(initial_x, f, params);
 
     //optimizer.init(initial_x, f, params, ss);

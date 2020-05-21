@@ -6,11 +6,8 @@
 
 
 namespace NLOP {
-
 /// @class NLOP::LineSearchParams
 /// @brief Abstract class for params for all line search optimization
-/// @param VariableType The type of variable x
-
 class LineSearchParams: public OptimizerParamsBase
 {
 public:

@@ -37,6 +37,7 @@ set(HEADERS
     include/OptimizerParams/HookeJeevesParams.hpp
     include/OptimizerParams/RosenbrockParams.hpp
     include/OptimizerParams/NewtonParams.hpp
+    include/OptimizerParams/LevenbergMarquardtParams.hpp
 
     # Optimizer Base
     include/OptimizerBase/OptimizerBase.hpp
@@ -55,7 +56,6 @@ set(HEADERS
     include/LineSearchMethods/AdaDeltaOptimizer.hpp
     include/LineSearchMethods/AdamOptimizer.hpp
     include/LineSearchMethods/HookeJeevesOptimizer.hpp
-    include/LineSearchMethods/RosenbrockOptimizer.hpp
     include/LineSearchMethods/NewtonOptimizer.hpp
 
     # Trust Region Methods
