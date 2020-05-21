@@ -4,6 +4,8 @@
 #include <eigen3/Eigen/Core>
 #include <eigen3/unsupported/Eigen/AutoDiff>
 
+#include <Utils/Hessian.hpp>
+
 namespace NLOP {
 
 /// @class NLOP::Functor
@@ -17,6 +19,7 @@ public:
     using InputType = Eigen::Matrix<T, N, 1>;
     using ValueType = Eigen::Matrix<T, 1, 1>;
     using JacobianType = Eigen::Matrix<T, 1, N>;
+    using HessianType = Eigen::Matrix<T, N, N>;
     using Scalar = T;
 
     enum{

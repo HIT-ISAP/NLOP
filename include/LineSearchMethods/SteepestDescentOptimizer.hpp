@@ -8,8 +8,7 @@ namespace NLOP {
 
 /// @class SteepestDescentOptimizer
 /// @brief Steepest descent method optimizer
-/// @param T The numeric scalar type
-/// @param N The dimension of variable x
+/// @param FunctorType Target function type
 template<typename FunctorType>
 class SteepestDescentOptimizer: public LineSearchOptimizer<FunctorType>
 {
@@ -79,7 +78,7 @@ public:
             }
         }
     }
-
+private:
     SteepestDescentParams* params;
 };
 }

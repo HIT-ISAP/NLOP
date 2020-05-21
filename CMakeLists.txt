@@ -18,6 +18,7 @@ set(HEADERS
     include/Utils/Types.hpp
     include/Utils/Utils.hpp
     include/Utils/Functor.hpp
+    include/Utils/Hessian.hpp
 
     #Optimizer Params Base
     include/OptimizerParams/OptimizerParamsBase.hpp
@@ -33,6 +34,9 @@ set(HEADERS
     include/OptimizerParams/RMSPropParams.hpp
     include/OptimizerParams/AdaDeltaParams.hpp
     include/OptimizerParams/AdamParams.hpp
+    include/OptimizerParams/HookeJeevesParams.hpp
+    include/OptimizerParams/RosenbrockParams.hpp
+    include/OptimizerParams/NewtonParams.hpp
 
     # Optimizer Base
     include/OptimizerBase/OptimizerBase.hpp
@@ -50,6 +54,9 @@ set(HEADERS
     include/LineSearchMethods/RMSPropOptimizer.hpp
     include/LineSearchMethods/AdaDeltaOptimizer.hpp
     include/LineSearchMethods/AdamOptimizer.hpp
+    include/LineSearchMethods/HookeJeevesOptimizer.hpp
+    include/LineSearchMethods/RosenbrockOptimizer.hpp
+    include/LineSearchMethods/NewtonOptimizer.hpp
 
     # Trust Region Methods
     include/TrustRegionMethods/LevenbergMarquardtOptimizer.hpp

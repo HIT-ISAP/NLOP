@@ -18,8 +18,7 @@ protected:
     using InputType = typename FunctorType::InputType;
     using ValueType = typename FunctorType::ValueType;
     using JacobianType = typename FunctorType::JacobianType;
-
-    //using FunctorType::InputsAtCompileTime;
+    using HessianType = typename FunctorType::HessianType;
 
 public:
     /// TODO: assert the dimension is correct
@@ -41,7 +40,7 @@ public:
     void printResult()
     {
         std::cout << "Gradient: (" << f->getJacobian() << ")" << std::endl;
-        std::cout << "Steepest Descent Optimization Finished!" << std::endl;
+        std::cout << "Optimization Finished!" << std::endl;
         std::cout << "Optimal x: (" << f->getX().transpose() << ")" << std::endl;
         std::cout << "f(x) = " << f->getY() << std::endl;
     }
