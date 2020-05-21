@@ -3,18 +3,12 @@
 namespace NLOP {
 /// @class NLOP::NewtonParams
 /// @brief Params of Newton optimization methods
-class NewtonParams
+class NewtonParams: public LineSearchParams
 {
 public:
     /// @brief Constructor
     NewtonParams() {}
 
-    /// @brief Set mininum gradient to control iterations to stop
-    void setMinGradient(const double value)
-    {
-        min_gradient = value;
-    }
-
-    double min_gradient = 0.01; // Gradient threshold to stop the iterations
+    double min_delta_x = 0.01; // Gradient threshold to stop the iterations
 };
 }

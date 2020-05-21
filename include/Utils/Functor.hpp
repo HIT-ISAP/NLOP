@@ -4,8 +4,6 @@
 #include <eigen3/Eigen/Core>
 #include <eigen3/unsupported/Eigen/AutoDiff>
 
-#include <Utils/Hessian.hpp>
-
 namespace NLOP {
 
 /// @class NLOP::Functor

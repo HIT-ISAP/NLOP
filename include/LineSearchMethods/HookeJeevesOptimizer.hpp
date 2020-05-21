@@ -64,10 +64,6 @@ private:
             d.setZero(1, InputType::RowsAtCompileTime);
             d[i] = 1;
 
-            auto lhs1 = (*f)(y + stepsize * d.transpose());
-            auto rhs = (*f)(y);
-            auto lhs2 = (*f)(y - stepsize * d.transpose());
-
             if ((*f)(y + stepsize * d.transpose()) < (*f)(y))
             {
                 y_next = y + stepsize * d.transpose();
@@ -90,10 +86,6 @@ private:
     {
         params->iteration_times++;
         //this->printProcessInformation();
-
-        auto lhs3 = (*f)(y_next);
-
-        auto rhs2 = (*f)(x);
 
         if ((*f)(y_next) < (*f)(x))
             step3();

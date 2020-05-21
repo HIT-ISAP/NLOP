@@ -9,7 +9,7 @@
 #include <LineSearchMethods/AdaDeltaOptimizer.hpp>
 #include <LineSearchMethods/AdamOptimizer.hpp>
 #include <LineSearchMethods/HookeJeevesOptimizer.hpp>
-#include <LineSearchMethods/RosenbrockOptimizer.hpp>
+#include <LineSearchMethods/NewtonOptimizer.hpp>
 
 using namespace std;
 
@@ -33,6 +33,22 @@ struct RosenbrockFunctor: public NLOP::Functor<double, 2>
     }
 };
 
+struct RosenbrockHessianFunctor: public NLOP::Functor<double, 2>
+{
+    RosenbrockHessianFunctor() {}
+
+    HessianType operator() (const InputType& x)
+    {
+        HessianType H;
+        H(0, 0) = 1200 * x[0] * x[0] - 400 * x[1] + 2;
+        H(0, 1) = -400 * x[0];
+        H(1, 0) = -400 * x[0];
+        H(1, 1) = 200;
+        return H;
+    }
+};
+
+/*
 struct HookeTestFunctor: public NLOP::Functor<double, 2>
 {
     double x1, x2;
@@ -55,13 +71,14 @@ struct HookeTestFunctor: public NLOP::Functor<double, 2>
         std::cout << (*v)[0] << std::endl;
     }
 };
+*/
 
 using namespace NLOP;
 
 int main()
 {
     RosenbrockFunctor* f = new RosenbrockFunctor;
-    Eigen::Vector2d initial_x(0, 3);
+    Eigen::Vector2d initial_x(0, 0);
 
     //auto ss = new GoldSectionMethod<RosenbrockFunctor>;
     //auto ss = new FibonacciMethod<RosenbrockFunctor>;
@@ -101,9 +118,13 @@ int main()
     //AdamParams* params = new AdamParams;
     //optimizer.init(initial_x, f, params);
 
-    HookeTestFunctor* f_t = new HookeTestFunctor;
-    HookeJeevesOptimizer<RosenbrockFunctor> optimizer;
-    HookeJeevesParams* params = new HookeJeevesParams;
+    //HookeTestFunctor* f_t = new HookeTestFunctor;
+    //HookeJeevesOptimizer<RosenbrockFunctor> optimizer;
+    //HookeJeevesParams* params = new HookeJeevesParams;
+    //optimizer.init(initial_x, f, params);
+
+    NewtonOptimizer<RosenbrockFunctor, RosenbrockHessianFunctor> optimizer;
+    NewtonParams* params = new NewtonParams;
     optimizer.init(initial_x, f, params);
 
     //optimizer.init(initial_x, f, params, ss);

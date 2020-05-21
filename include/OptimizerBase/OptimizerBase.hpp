@@ -39,18 +39,18 @@ public:
     /// @brief Print optimization result
     void printResult()
     {
-        std::cout << "Gradient: (" << f->getJacobian() << ")" << std::endl;
         std::cout << "Optimization Finished!" << std::endl;
         std::cout << "Optimal x: (" << f->getX().transpose() << ")" << std::endl;
         std::cout << "f(x) = " << f->getY() << std::endl;
+        std::cout << "Gradient: (" << f->getJacobian() << ")" << std::endl;
     }
 
     /// @brief Print optimization process information
     void printProcessInformation()
     {
-        std::cout << "Gradient: " << "\n" << f->getJacobian() << std::endl;
-        std::cout << "x: " << "\n" << f->getX() << std::endl;
+        std::cout << "x: (" << f->getX().transpose() << ")" << std::endl;
         std::cout << "f(x) = " << f->getY() << std::endl;
+        std::cout << "Gradient: (" << f->getJacobian() << ")" << std::endl;
     }
 
     /// @brief Iteratively compute the optimal x
