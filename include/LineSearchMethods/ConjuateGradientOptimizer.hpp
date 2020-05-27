@@ -52,7 +52,7 @@ public:
     {
         this->printInitialConfigurations();
         this->writer.open("../data/"
-                          "conjuate gradient -- goldensection.txt");
+                          "conjuate gradient -- WolfePowell.txt");
         while (true){
             this->updateValueAndJacobian();
             this->writeInformation();

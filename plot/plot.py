@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import ticker
 
-name = 'steepest descent -- goldensection'
+name = 'steepest descent -- WolfePowell'
 
 def f(x, y):
     return (1 - x) ** 2 + 100 * (y - x * x) ** 2

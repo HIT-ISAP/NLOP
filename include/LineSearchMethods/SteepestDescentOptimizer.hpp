@@ -50,7 +50,7 @@ public:
     {
         this->printInitialConfigurations();
         this->writer.open("../data/"
-                          "steepest descent -- dichotomous.txt");
+                          "steepest descent -- WolfePowell.txt");
         while (true) {
             this->updateValueAndJacobian();
 

@@ -62,13 +62,13 @@ int main()
 
     //auto ss = new GoldsteinMethod<RosenbrockFunctor>;
     //auto ss = new ArmijoMethod<RosenbrockFunctor>;
-    //auto ss = new WolfePowellMethod<RosenbrockFunctor>;
+    auto ss = new WolfePowellMethod<RosenbrockFunctor>;
 
     //SteepestDescentOptimizer<RosenbrockFunctor> optimizer;
     //SteepestDescentParams* params= new SteepestDescentParams;
 
-    //ConjuateGradientOptimizer<RosenbrockFunctor> optimizer;
-    //ConjuateGradientParams* params = new ConjuateGradientParams;
+    ConjuateGradientOptimizer<RosenbrockFunctor> optimizer;
+    ConjuateGradientParams* params = new ConjuateGradientParams;
 
     //MomentumOptimizer<RosenbrockFunctor> optimizer;
     //MomentumParams* params = new MomentumParams;
@@ -102,11 +102,11 @@ int main()
     //NewtonParams* params = new NewtonParams;
     //optimizer.init(initial_x, f, params);
 
-    LevenbergMarquardtOptimizer<RosenbrockFunctor, RosenbrockHessianFunctor> optimizer;
-    LevenbergMarquardtParams* params = new LevenbergMarquardtParams;
-    optimizer.init(initial_x, f, params);
+    //LevenbergMarquardtOptimizer<RosenbrockFunctor, RosenbrockHessianFunctor> optimizer;
+    //LevenbergMarquardtParams* params = new LevenbergMarquardtParams;
+    //optimizer.init(initial_x, f, params);
 
-    //optimizer.init(initial_x, f, params, ss);
+    optimizer.init(initial_x, f, params, ss);
     optimizer.optimize();
 
     return 0;
