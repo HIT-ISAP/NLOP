@@ -38,8 +38,11 @@ public:
     InputType optimize() override
     {
         this->printInitialConfigurations();
+        this->writer.open("../data/"
+                          "Adagrad.txt");
         while (true){
             this->updateValueAndJacobian();
+            this->writeInformation();
             if (params->iteration_times > params->max_iteration_times)
             {
                 std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
@@ -69,6 +72,7 @@ public:
                 f->setX(x_next);
             }
         }
+        this->writer.close();
     }
 
 

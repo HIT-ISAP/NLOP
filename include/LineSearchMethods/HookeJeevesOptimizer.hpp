@@ -44,9 +44,12 @@ public:
     InputType optimize() override
     {
         this->printInitialConfigurations();
+        this->writer.open("../data/"
+                          "Hooke Jeeves.txt");
         x = f->getX();
         y = x;
         step1();
+        this->writer.close();
     }
 
 private:
@@ -84,20 +87,21 @@ private:
 
     void step2()
     {
-        params->iteration_times++;
-        //this->printProcessInformation();
-
         if ((*f)(y_next) < (*f)(x))
             step3();
         else
             step4();
-
     }
 
     void step3()
     {
+        params->iteration_times++;
+
         x_next = y_next;
         f->setX(x_next);
+        this->updateValue();
+        this->writeInformation();
+
         y = x_next + params->alpha * (x_next - x);
         x = x_next;
         step1();
@@ -107,8 +111,11 @@ private:
     {
         if (stepsize < params->epsilon)
         {
+            params->iteration_times++;
+
             f->setX(x_next);
             this->updateValue();
+
             std::cout << "Iteration times: " << params->iteration_times << std::endl;
             std::cout << "Optimization Finished!" << std::endl;
             std::cout << "Optimal x: (" << f->getX().transpose() << ")" << std::endl;

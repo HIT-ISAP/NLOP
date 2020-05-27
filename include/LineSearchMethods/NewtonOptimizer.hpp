@@ -40,8 +40,11 @@ public:
     InputType optimize() override
     {
         this->printInitialConfigurations();
+        this->writer.open("../data/"
+                          "Newton.txt");
         while (true){
             this->updateValueAndJacobian();
+            this->writeInformation();
             if (params->iteration_times > params->max_iteration_times)
             {
                 std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
@@ -55,8 +58,6 @@ public:
                 x = f->getX();
                 g = f->getJacobian();
 
-                //auto h = H(x);
-
                 delta_x = H(x).inverse() * g.transpose();
 
                 if (delta_x.norm() < params->min_delta_x)
@@ -69,6 +70,7 @@ public:
                 f->setX(x - delta_x);
             }
         }
+        this->writer.close();
     }
 
 private:

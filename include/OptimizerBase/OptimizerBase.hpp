@@ -2,6 +2,7 @@
 #define OPTIMIZERBASE_HPP
 
 #include <iostream>
+#include <fstream>
 #include <OptimizerParams/OptimizerParamsBase.hpp>
 #include <StepsizeSearch/StepsizeSearchBase.hpp>
 
@@ -67,9 +68,17 @@ public:
         delete f;
     }
 
+    void writeInformation()
+    {
+        writer << f->getX()[0] << " "
+               << f->getX()[1] << " "
+               << f->getY() << "\n";
+    }
+
 protected:
     FunctorType* f; // Target function
     Eigen::AutoDiffJacobian<FunctorType> adjac; // Tool to compute value and jacobian
+    std::ofstream writer; // Tool to write information into txt
 
 };
 }

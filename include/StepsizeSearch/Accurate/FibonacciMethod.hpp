@@ -53,6 +53,12 @@ public:
         while (true)
         {
             //this->printProcess();
+            if (iteration_times > n)
+            {
+                std::cout << "Beyong max iteration times" << std::endl;
+                this->reset();
+                return (beta + alpha)/2;
+            }
 
             // Stopping condition: (alpha - beta) < epsilon
             if (beta - alpha < epsilon)

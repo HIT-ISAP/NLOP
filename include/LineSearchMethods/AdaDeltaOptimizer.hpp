@@ -45,12 +45,15 @@ public:
         s_dx_last.setZero(InputType::RowsAtCompileTime, 1);
     }
 
-    /// @brief RMSProp optimization process
+    /// @brief AdaDelta optimization process
     InputType optimize() override
     {
         this->printInitialConfigurations();
+        this->writer.open("../data/"
+                          "AdaDelta.txt");
         while (true) {
             this->updateValueAndJacobian();
+            this->writeInformation();
             if (params->iteration_times > params->max_iteration_times)
             {
                 std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
@@ -100,6 +103,7 @@ public:
                 s_dx_last = s_dx;
             }
         }
+        this->writer.close();
     }
 
 private:

@@ -49,8 +49,12 @@ public:
     InputType optimize() override
     {
         this->printInitialConfigurations();
+        this->writer.open("../data/"
+                          "steepest descent -- dichotomous.txt");
         while (true) {
             this->updateValueAndJacobian();
+
+            this->writeInformation();
             if (params->iteration_times > params->max_iteration_times)
             {
                 std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
@@ -77,6 +81,7 @@ public:
                 //this->printProcessInformation();
             }
         }
+        this->writer.close();
     }
 private:
     SteepestDescentParams* params;

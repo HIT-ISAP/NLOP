@@ -49,31 +49,6 @@ struct RosenbrockHessianFunctor: public NLOP::Functor<double, 2>
     }
 };
 
-/*
-struct HookeTestFunctor: public NLOP::Functor<double, 2>
-{
-    double x1, x2;
-    double operator ()(const InputType& x)
-    {
-        x1 = x[0];
-        x2 = x[1];
-        double result = pow(x1 - 2, 4) + pow(x1 - 2*x2, 2);
-        return result;
-    }
-
-    void operator ()(const ActiveInput& x, ActiveValue* v) const
-    {
-        (*v)[0] = pow(x1 - 2, 4) + pow(x1 - 2*x2, 2);
-    }
-
-    void operator() (const InputType& x, ValueType* v, JacobianType* _j=0) const
-    {
-        (*v)[0] = pow(x[0] - 2, 4) + pow(x[0] - 2*x[1], 2);
-        std::cout << (*v)[0] << std::endl;
-    }
-};
-*/
-
 using namespace NLOP;
 
 int main()
@@ -119,7 +94,6 @@ int main()
     //AdamParams* params = new AdamParams;
     //optimizer.init(initial_x, f, params);
 
-    //HookeTestFunctor* f_t = new HookeTestFunctor;
     //HookeJeevesOptimizer<RosenbrockFunctor> optimizer;
     //HookeJeevesParams* params = new HookeJeevesParams;
     //optimizer.init(initial_x, f, params);

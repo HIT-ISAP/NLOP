@@ -37,12 +37,15 @@ public:
         v_last.setZero(1, InputType::RowsAtCompileTime);
     }
 
-    /// @brief RMSProp optimization process
+    /// @brief Adam optimization process
     InputType optimize() override
     {
         this->printInitialConfigurations();
+        this->writer.open("../data/"
+                          "Adam.txt");
         while (true) {
             this->updateValueAndJacobian();
+            this->writeInformation();
             if (params->iteration_times > params->max_iteration_times)
             {
                 std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
@@ -84,6 +87,7 @@ public:
                 v_last = v;
             }
         }
+        this->writer.close();
     }
 
 private:
