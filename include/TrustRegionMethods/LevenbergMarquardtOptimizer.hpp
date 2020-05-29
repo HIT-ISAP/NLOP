@@ -85,11 +85,11 @@ public:
                         (0.5 * delta_x.transpose() * H(x) * delta_x + g * delta_x)(0, 0);
 
                 if (R < 0)
-                    x_next = x;
+                    ; /// @todo
                 else if (R < 0.25)
-                    R *= 4;
+                    epsilon *= 4;
                 else if (R > 0.75)
-                    R *= 0.5;
+                    epsilon *= 0.5;
 
                 f->setX(x_next);
             }

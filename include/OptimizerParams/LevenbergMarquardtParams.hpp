@@ -13,7 +13,7 @@ public:
     LevenbergMarquardtParams() {}
 
     double min_delta_x = 0.0001; // Gradient threshold to stop the iterations
-    double init_epsilon = 100;
+    double init_epsilon = 4;
 };
 }
 

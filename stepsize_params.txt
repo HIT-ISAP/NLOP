@@ -1,0 +1,44 @@
+Accurate
+*******************************************
+Common:
+	alpha = 0;
+    beta = 1;
+    epsilon = 0.001;
+*******************************************
+1.GoldenSection
+	t = 0.618
+*******************************************
+2.Fibonacci
+	n = 20;
+*******************************************
+3.Dichotomous
+	t = 0.5
+	epsilon = 0.0005;
+	max_iteration_times = int(std::log2((beta - alpha)/epsilon));
+*******************************************
+
+
+Inaccurate
+*******************************************
+Common:
+	alpha = 1.5; // Increase factor
+    beta = 0.5; // Decrease factor
+*******************************************
+1.Armijo
+	rho = 0.1; // rho <= 0.1
+    mu = 10; // mu = 5 ~ 10
+    max_lambda = 1; // max stepsize
+    init_lambda_factor = 0.1; // initial stepsize factor
+*******************************************
+2.Goldstein
+	rho = 0.1;
+    max_lambda = 1; // max stepsize
+    init_lambda_factor = 0.1; // initial stepsize factor(by init stepsize)
+*******************************************
+3. Wolfe-Powell
+	rho = 0.1; // rho <= 0.1
+    sigma = 0.8; // sigma ~ (rho, 1)
+
+    max_lambda = 1; // max stepsize
+    init_lambda_factor = 0.1; // initial stepsize factor
+*******************************************

@@ -12,7 +12,7 @@ public:
     /// @brief Constructor
     NewtonParams() {}
 
-    double min_delta_x = 0.01; // Gradient threshold to stop the iterations
+    double min_delta_x = 0.01; // stepsize threshold to stop the iterations
 };
 }
 
