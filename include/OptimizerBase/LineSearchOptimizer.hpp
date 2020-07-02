@@ -26,6 +26,7 @@ protected:
     using typename Base::InputType;
     using typename Base::ValueType;
     using typename Base::JacobianType;
+    using typename Base::HessianType;
 
     using Base::f;
 

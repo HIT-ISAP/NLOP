@@ -99,7 +99,7 @@ public:
     }
 
     ConjuateGradientParams* params;
-    JacobianType last_g ; // gradient at time k-1
+    JacobianType last_g; // gradient at time k-1
     JacobianType g; // gradient at time k
     JacobianType last_d; // direction at time k-1
 

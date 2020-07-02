@@ -11,6 +11,8 @@
 #include <LineSearchMethods/HookeJeevesOptimizer.hpp>
 #include <LineSearchMethods/NewtonOptimizer.hpp>
 #include <TrustRegionMethods/LevenbergMarquardtOptimizer.hpp>
+#include <LineSearchMethods/DFP_Optimizer.hpp>
+#include <LineSearchMethods/BFGS_Optimizer.hpp>
 
 using namespace std;
 
@@ -56,7 +58,7 @@ int main()
     RosenbrockFunctor* f = new RosenbrockFunctor;
     Eigen::Vector2d initial_x(0, 0);
 
-    //auto ss = new GoldSectionMethod<RosenbrockFunctor>;
+    auto ss = new GoldSectionMethod<RosenbrockFunctor>;
     //auto ss = new FibonacciMethod<RosenbrockFunctor>;
     //auto ss = new DichotomousMethod<RosenbrockFunctor>;
 
@@ -102,9 +104,17 @@ int main()
     //NewtonParams* params = new NewtonParams;
     //optimizer.init(initial_x, f, params);
 
-    LevenbergMarquardtOptimizer<RosenbrockFunctor, RosenbrockHessianFunctor> optimizer;
-    LevenbergMarquardtParams* params = new LevenbergMarquardtParams;
-    optimizer.init(initial_x, f, params);
+    //LevenbergMarquardtOptimizer<RosenbrockFunctor, RosenbrockHessianFunctor> optimizer;
+    //LevenbergMarquardtParams* params = new LevenbergMarquardtParams;
+    //optimizer.init(initial_x, f, params);
+
+    //DFP_Optimizer<RosenbrockFunctor> optimizer;
+    //DFP_Params* params = new DFP_Params;
+    //optimizer.init(initial_x, f, params, ss);
+
+    BFGS_Optimizer<RosenbrockFunctor> optimizer;
+    BFGS_Params* params = new BFGS_Params;
+    optimizer.init(initial_x, f, params, ss);
 
     //optimizer.init(initial_x, f, params, ss);
     optimizer.optimize();

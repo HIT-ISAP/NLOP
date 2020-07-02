@@ -36,8 +36,11 @@ set(HEADERS
     include/OptimizerParams/AdamParams.hpp
     include/OptimizerParams/HookeJeevesParams.hpp
     include/OptimizerParams/RosenbrockParams.hpp
+
     include/OptimizerParams/NewtonParams.hpp
     include/OptimizerParams/LevenbergMarquardtParams.hpp
+    include/OptimizerParams/DFP_Params.hpp
+    include/OptimizerParams/BFGS_Params.hpp
 
     # Optimizer Base
     include/OptimizerBase/OptimizerBase.hpp
@@ -56,7 +59,11 @@ set(HEADERS
     include/LineSearchMethods/AdaDeltaOptimizer.hpp
     include/LineSearchMethods/AdamOptimizer.hpp
     include/LineSearchMethods/HookeJeevesOptimizer.hpp
+
+    # Newton's method and Quasi-Newton method
     include/LineSearchMethods/NewtonOptimizer.hpp
+    include/LineSearchMethods/DFP_Optimizer.hpp
+    include/LineSearchMethods/BFGS_Optimizer.hpp
 
     # Trust Region Methods
     include/TrustRegionMethods/LevenbergMarquardtOptimizer.hpp
