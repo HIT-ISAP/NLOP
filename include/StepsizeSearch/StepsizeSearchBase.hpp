@@ -22,18 +22,20 @@ public:
     /// @brief Iteratively search the accurate optimal stepsize
     virtual T search(JacobianType& d) = 0;
 
-    /// @brief Set max iteration times
-    void setMaxIterations(int value)
-    {
-        max_iteration_times = value;
-    }
+    /// @brief Set and get max iteration times
+    void setMaxIterations(size_t value) { max_iteration_times = value; }
+    size_t getMaxIterations() const { return max_iteration_times; }
+
+    /// @brief Set and get recent iteration times
+    void setIterationTimes(size_t value) { iteration_times = value; }
+    size_t getIterationTimes() const { return iteration_times; }
 
     virtual void init(FunctorType* f) = 0;
 
     FunctorType* f; // Target function
 
-    int iteration_times = 0;
-    int max_iteration_times = 20;
+    size_t iteration_times = 0;
+    size_t max_iteration_times = 20;
 };
 }
 

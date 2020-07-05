@@ -37,40 +37,54 @@ public:
     /// @brief Momentum optimization process
     InputType optimize() override
     {
-        this->printInitialConfigurations();
-        this->writer.open("../data/"
-                          "Momentum.txt");
+        if (params->getVerbosity() == MomentumParams::SUMMARY
+                 || params->getVerbosity() == MomentumParams::DETAIL)
+        {
+            params->print("Momentum optimization");
+            this->printInitialConfigurations();
+        }
+        //this->writer.open("../data/"
+        //                  "Momentum.txt");
         while (true) {
             this->updateValueAndJacobian();
-            this->writeInformation();
-            if (params->iteration_times > params->max_iteration_times)
+            //this->writeInformation();
+            if (params->getIterationTimes() > params->getMaxIterations())
             {
                 std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
                 this->printResult();
                 return f->getX();
             }
-            if (f->getJacobian().norm() < params->min_gradient)
+            if (f->getJacobian().norm() < params->getMinGradient())
             {
-                std::cout << "Iteration times: " << params->iteration_times << std::endl;
-                this->printResult();
+                if (params->getVerbosity() == MomentumParams::SUMMARY
+                         || params->getVerbosity() == MomentumParams::DETAIL)
+                {
+                    std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
+                    this->printResult();
+                }
                 return f->getX();
             }
             else
             {
-                params->iteration_times++;
+                params->nextIteration();
 
                 g = f->getJacobian();
 
                 // compute momentum v
-                v = params->beta * v_last - params->alpha * g;
+                v = params->getBeta() * v_last - params->getAlpha() * g;
 
                 f->setX(f->getX() + v.transpose());
                 v_last = v;
 
-                //this->printProcessInformation();
+                if (params->getVerbosity() == MomentumParams::DETAIL)
+                {
+                    std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
+                    this->printProcessInformation();
+                }
+
             }
         }
-        this->writer.close();
+        //this->writer.close();
     }
 
 private:

@@ -29,18 +29,17 @@ protected:
 public:
     /// @brief Constructors
     BFGS_Optimizer() {}
-
     ~BFGS_Optimizer() {}
 
     /// @brief Initialize
     void init(const InputType& initial, FunctorType* f,
-              BFGS_Params* params, StepsizeSearchBase<FunctorType>* ss)
+              BFGS_Params* params)
     {
         this->f = f;
         this->f->setX(initial);
         this->updateValue();
         this->params = params;
-        this->ss = ss;
+        this->initStepsizeMethod(params);
         this->ss->init(this->f);
 
         delta_x.setZero(InputType::RowsAtCompileTime, 1);
@@ -52,33 +51,42 @@ public:
     /// @brief BFGS optimization process
     InputType optimize() override
     {
-        this->printInitialConfigurations();
-        this->writer.open("../data/"
-                          "BFGS -- GoldenSection.txt");
+        if (params->getVerbosity() == BFGS_Params::SUMMARY
+                 || params->getVerbosity() == BFGS_Params::DETAIL)
+        {
+            params->print("BFGS optimization");
+            this->printInitialConfigurations();
+        }
+        //this->writer.open("../data/"
+        //                  "BFGS -- GoldenSection.txt");
         while (true) {
             this->updateValueAndJacobian();
-            this->writeInformation();
-            if (params->iteration_times > params->max_iteration_times)
+            //this->writeInformation();
+            if (params->getIterationTimes() > params->getMaxIterations())
             {
                 std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
                 this->printResult();
                 return f->getX();
             }
-            if (f->getJacobian().norm() < params->min_gradient)
+            if (f->getJacobian().norm() < params->getMinGradient())
             {
-                std::cout << "Iteration times: " << params->iteration_times << std::endl;
-                this->printResult();
+                if (params->getVerbosity() == BFGS_Params::SUMMARY
+                         || params->getVerbosity() == BFGS_Params::DETAIL)
+                {
+                    std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
+                    this->printResult();
+                }
                 return f->getX();
             }
             else
             {
-                params->iteration_times++;
+                params->nextIteration();
 
                 // Get gradient
                 g = f->getJacobian();
 
                 // Update H
-                if (params->iteration_times == 1)
+                if (params->getIterationTimes() == 1)
                 {
                     H.setIdentity(InputType::RowsAtCompileTime, InputType::RowsAtCompileTime);
                 }
@@ -105,12 +113,17 @@ public:
                 g_last = g;
                 x_last = x;
 
-                //this->printProcessInformation();
+                if (params->getVerbosity() == BFGS_Params::DETAIL)
+                {
+                    std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
+                    this->printProcessInformation();
+                }
             }
         }
-        this->writer.close();
+        //this->writer.close();
     }
 
+private:
     BFGS_Params* params; // optimizer params
 
     JacobianType g; // gradient at time k

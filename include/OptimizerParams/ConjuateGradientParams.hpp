@@ -10,55 +10,36 @@ class ConjuateGradientParams: public LineSearchParams
 {
 public:
     /// @brief Construct
-    ConjuateGradientParams() {}
-
-    // Approximate method to avoid computing Hessian
-    enum ApproximateMethod {
-        FR, // Fletcher-Reeves
-        PR // Polak-Ribiere
-    };
+    ConjuateGradientParams() { setDefaults(); }
 
     /// @brief Use default optimizer params
     void setDefaults()
     {
-        max_iteration_times = 10000;
+        max_iteration_times = 1000;
         iteration_times = 0;
-        verbosity = false;
-        stepsize_search_method = GOLDENSECTION;
+        verbosity = SUMMARY;
+        stepsize_method = WOLFEPOWELL;
         min_gradient = 0.01;
-        approximation = FR;
     }
 
-    void setApproximateMethod(std::string method)
+    /// @brief print params of optimizer
+    void print(const std::string &str) override
     {
-        approximation = enumTranslator(method);
+        std::cout << str << "\n";
+        std::cout << "*********************************************" << "\n";
+        std::cout << "maximum iterations: " << max_iteration_times << "\n";
+        std::cout << "verbosity: " << verbosityTranslator(verbosity) << "\n";
+        std::cout << "stepsize method: " << StepsizeMethodTranslator(stepsize_method) << "\n";
+        std::cout << "gradient thresthold: " << min_gradient << "\n";
+        std::cout << "*********************************************" << std::endl;
     }
 
-    ApproximateMethod enumTranslator(std::string method)
-    {
-        ApproximateMethod result;
-        if (method == "FR")
-            result = FR;
-        else if (method == "PR")
-            result = PR;
-        else
-        {
-            std::cerr << "Values ​​other than FR and PR are invalid!" << std::endl;
-            result = FR;
-        }
-        return result;
-    }
+    /// @brief Set and get mininum gradient to control iterations to stop
+    void setMinGradient(const double value){ min_gradient = value; }
+    double getMinGradient() const { return min_gradient; }
 
-    /// @brief Set mininum gradient to control iterations to stop
-    void setMinGradient(const double value)
-    {
-        min_gradient = value;
-    }
-
-    double min_gradient = 0.01; // Gradient threshold to stop the iterations
-    ApproximateMethod approximation = FR; // Approximate method to avoid computing Hessian
-                                          // Default == FR
-
+private:
+    double min_gradient; // Gradient threshold to stop the iterations
 };
 }
 

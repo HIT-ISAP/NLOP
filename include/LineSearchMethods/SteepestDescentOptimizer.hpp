@@ -5,7 +5,6 @@
 #include <OptimizerParams/SteepestDescentParams.hpp>
 
 namespace NLOP {
-
 /// @class SteepestDescentOptimizer
 /// @brief Steepest descent method optimizer
 /// @param FunctorType Target function type
@@ -26,49 +25,55 @@ protected:
     using LineSearch::stepsize;
     using LineSearch::d;
 
-
 public:
     /// @brief Constructors
     SteepestDescentOptimizer() {}
-
     ~SteepestDescentOptimizer() {}
 
     /// @brief Initialize SteepestDescentOptimizer
     void init(const InputType& initial, FunctorType* f,
-              SteepestDescentParams* params, StepsizeSearchBase<FunctorType>* ss)
+              SteepestDescentParams* params)
     {
         this->f = f;
         this->f->setX(initial);
         this->updateValue();
         this->params = params;
-        this->ss = ss;
+        this->initStepsizeMethod(params);
         this->ss->init(this->f);
     }
 
     /// @brief Steepest Descent optimization process
     InputType optimize() override
     {
-        this->printInitialConfigurations();
-        this->writer.open("../data/"
-                          "steepest descent -- WolfePowell.txt");
+        if (params->getVerbosity() == SteepestDescentParams::SUMMARY
+                 || params->getVerbosity() == SteepestDescentParams::DETAIL)
+        {
+            params->print("Steepest descent optimization");
+            this->printInitialConfigurations();
+        }
+        //this->writer.open("../data/"
+        //                  "steepest descent -- WolfePowell.txt");
         while (true) {
             this->updateValueAndJacobian();
-
-            this->writeInformation();
-            if (params->iteration_times > params->max_iteration_times)
+            //this->writeInformation();
+            if (params->getIterationTimes() > params->getMaxIterations())
             {
                 std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
                 return f->getX();
             }
-            if (f->getJacobian().norm() < params->min_gradient)
+            if (f->getJacobian().norm() < params->getMinGradient())
             {
-                std::cout << "Iteration times: " << params->iteration_times << std::endl;
-                this->printResult();
+                if (params->getVerbosity() == SteepestDescentParams::SUMMARY
+                    || params->getVerbosity() == SteepestDescentParams::DETAIL)
+                {
+                    std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
+                    this->printResult();
+                }
                 return f->getX();
             }
             else
             {
-                params->iteration_times++;
+                params->nextIteration();
 
                 // The direction of descent is negative gradient
                 d = -f->getJacobian();
@@ -78,10 +83,15 @@ public:
 
                 // Update x: x(k+1) = x(k) + stepsize(k) * d(k)
                 f->setX(f->getX() + stepsize * d.transpose());
-                //this->printProcessInformation();
+
+                if (params->getVerbosity() == SteepestDescentParams::DETAIL)
+                {
+                    std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
+                    this->printProcessInformation();
+                }
             }
         }
-        this->writer.close();
+        // this->writer.close();
     }
 private:
     SteepestDescentParams* params;

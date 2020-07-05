@@ -5,9 +5,8 @@
 #include <eigen3/unsupported/Eigen/AutoDiff>
 
 namespace NLOP {
-
 /// @class NLOP::Functor
-/// @brief Abstract template type for function expression
+/// @brief Template type for function expression
 /// @param T The numeric scalar type
 /// @param N the dimension of input variable x
 template<typename T, int N>

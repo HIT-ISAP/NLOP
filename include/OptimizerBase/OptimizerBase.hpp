@@ -39,18 +39,19 @@ public:
     /// @brief Print optimization result
     void printResult()
     {
-        std::cout << "Optimization Finished!" << std::endl;
-        std::cout << "Optimal x: (" << f->getX().transpose() << ")" << std::endl;
-        std::cout << "f(x) = " << f->getY() << std::endl;
+        std::cout << "Optimization Finished!" << "\n";
+        std::cout << "Optimal x: (" << f->getX().transpose() << ")" << "\n";
+        std::cout << "f(x) = " << f->getY() << "\n";
         std::cout << "Gradient: (" << f->getJacobian() << ")" << std::endl;
     }
 
     /// @brief Print optimization process information
     void printProcessInformation()
     {
-        std::cout << "x: (" << f->getX().transpose() << ")" << std::endl;
-        std::cout << "f(x) = " << f->getY() << std::endl;
-        std::cout << "Gradient: (" << f->getJacobian() << ")" << std::endl;
+        std::cout << "x: (" << f->getX().transpose() << ")" << "\n";
+        std::cout << "f(x) = " << f->getY() << "\n";
+        std::cout << "Gradient: (" << f->getJacobian() << ")" << "\n";
+        std::cout << "*********************************************" << std::endl;
     }
 
     /// @brief Iteratively compute the optimal x
@@ -60,7 +61,8 @@ public:
     {
         std::cout << "Initial Configurations: " << "\n"
                   << "x0: (" << f->getX().transpose() << ") \n"
-                  << "f(x0) = " << f->getY() << std::endl;
+                  << "f(x0) = " << f->getY() << "\n"
+                  << "*********************************************" << std::endl;
     }
 
     virtual ~OptimizerBase()

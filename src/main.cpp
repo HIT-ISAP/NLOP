@@ -14,6 +14,8 @@
 #include <LineSearchMethods/DFP_Optimizer.hpp>
 #include <LineSearchMethods/BFGS_Optimizer.hpp>
 
+//#include <ConstrainedOptimizer/ConstrainedOptimizerBase.hpp>
+
 using namespace std;
 
 struct RosenbrockFunctor: public NLOP::Functor<double, 2>
@@ -58,19 +60,17 @@ int main()
     RosenbrockFunctor* f = new RosenbrockFunctor;
     Eigen::Vector2d initial_x(0, 0);
 
-    auto ss = new GoldSectionMethod<RosenbrockFunctor>;
-    //auto ss = new FibonacciMethod<RosenbrockFunctor>;
-    //auto ss = new DichotomousMethod<RosenbrockFunctor>;
-
-    //auto ss = new GoldsteinMethod<RosenbrockFunctor>;
-    //auto ss = new ArmijoMethod<RosenbrockFunctor>;
-    //auto ss = new WolfePowellMethod<RosenbrockFunctor>;
-
     //SteepestDescentOptimizer<RosenbrockFunctor> optimizer;
     //SteepestDescentParams* params= new SteepestDescentParams;
+    //params->setVerbosity("DETAIL");
+    //params->setMaxItertaions(1000);
+    //params->setMinGradient(0.1);
+    //params->setStepsizeMethod("ARMIJO");
+    //optimizer.init(initial_x, f, params);
 
     //ConjuateGradientOptimizer<RosenbrockFunctor> optimizer;
     //ConjuateGradientParams* params = new ConjuateGradientParams;
+    //optimizer.init(initial_x, f, params);
 
     //MomentumOptimizer<RosenbrockFunctor> optimizer;
     //MomentumParams* params = new MomentumParams;
@@ -98,25 +98,25 @@ int main()
 
     //HookeJeevesOptimizer<RosenbrockFunctor> optimizer;
     //HookeJeevesParams* params = new HookeJeevesParams;
+    //params->setVerbosity("DETAIL");
     //optimizer.init(initial_x, f, params);
 
     //NewtonOptimizer<RosenbrockFunctor, RosenbrockHessianFunctor> optimizer;
     //NewtonParams* params = new NewtonParams;
     //optimizer.init(initial_x, f, params);
 
-    //LevenbergMarquardtOptimizer<RosenbrockFunctor, RosenbrockHessianFunctor> optimizer;
-    //LevenbergMarquardtParams* params = new LevenbergMarquardtParams;
-    //optimizer.init(initial_x, f, params);
+    LevenbergMarquardtOptimizer<RosenbrockFunctor, RosenbrockHessianFunctor> optimizer;
+    LevenbergMarquardtParams* params = new LevenbergMarquardtParams;
+    optimizer.init(initial_x, f, params);
 
     //DFP_Optimizer<RosenbrockFunctor> optimizer;
     //DFP_Params* params = new DFP_Params;
-    //optimizer.init(initial_x, f, params, ss);
+    //optimizer.init(initial_x, f, params);
 
-    BFGS_Optimizer<RosenbrockFunctor> optimizer;
-    BFGS_Params* params = new BFGS_Params;
-    optimizer.init(initial_x, f, params, ss);
+    //BFGS_Optimizer<RosenbrockFunctor> optimizer;
+    //BFGS_Params* params = new BFGS_Params;
+    //optimizer.init(initial_x, f, params);
 
-    //optimizer.init(initial_x, f, params, ss);
     optimizer.optimize();
 
     return 0;

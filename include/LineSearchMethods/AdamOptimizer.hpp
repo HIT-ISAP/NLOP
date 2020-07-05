@@ -40,45 +40,58 @@ public:
     /// @brief Adam optimization process
     InputType optimize() override
     {
-        this->printInitialConfigurations();
+        if (params->getVerbosity() == AdamParams::SUMMARY
+                 || params->getVerbosity() == AdamParams::DETAIL)
+        {
+            params->print("Adam optimization");
+            this->printInitialConfigurations();
+        }
         this->writer.open("../data/"
                           "Adam.txt");
         while (true) {
             this->updateValueAndJacobian();
             this->writeInformation();
-            if (params->iteration_times > params->max_iteration_times)
+            if (params->getIterationTimes() > params->getMaxIterations())
             {
                 std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
                 this->printResult();
                 return f->getX();
             }
-            if (f->getJacobian().norm() < params->min_gradient)
+            if (f->getJacobian().norm() < params->getMinGradient())
             {
-                std::cout << "Iteration times: " << params->iteration_times << std::endl;
-                this->printResult();
+                if (params->getVerbosity() == AdamParams::SUMMARY
+                         || params->getVerbosity() == AdamParams::DETAIL)
+                {
+                    std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
+                    this->printResult();
+                }
                 return f->getX();
             }
             else
             {
-                params->iteration_times++;
-                //this->printProcessInformation();
+                params->nextIteration();
+                if (params->getVerbosity() == AdamParams::DETAIL)
+                {
+                    std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
+                    this->printProcessInformation();
+                }
 
                 x = f->getX();
                 g = f->getJacobian();
 
-                v = params->gamma_v * v_last + (1 - params->gamma_v) * g;
+                v = params->getGammaV() * v_last + (1 - params->getGammaV()) * g;
 
                 for (int i = 0; i < InputType::RowsAtCompileTime; ++i)
                 {
-                    s[i] = params->gamma_s * s_last[i] + (1 - params->gamma_s) * g[i] * g[i];
+                    s[i] = params->getGammaS() * s_last[i] + (1 - params->getGammaS()) * g[i] * g[i];
                 }
 
-                v_vee = v / (1 - pow(params->gamma_v, params->iteration_times));
-                s_vee = s / (1 - pow(params->gamma_s, params->iteration_times));
+                v_vee = v / (1 - pow(params->getGammaV(), params->getIterationTimes()));
+                s_vee = s / (1 - pow(params->getGammaS(), params->getIterationTimes()));
 
                 for (int i = 0; i < InputType::RowsAtCompileTime; ++i)
                 {
-                    x_next[i] = x[i] - params->alpha * v_vee[i] / (params->epsilon + sqrt(s_vee[i]));
+                    x_next[i] = x[i] - params->getAlpha() * v_vee[i] / (params->getEpsilon() + sqrt(s_vee[i]));
                 }
 
                 f->setX(x_next);

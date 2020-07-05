@@ -10,18 +10,48 @@ class NesterovMomentumParams: public LineSearchParams
 {
 public:
     /// @brief Constructor
-    NesterovMomentumParams() {}
+    NesterovMomentumParams() { setDefaults(); }
 
-    /// @brief Set mininum gradient to control iterations to stop
-    void setMinGradient(const double value)
+    /// @brief Set and get mininum gradient to control iterations to stop
+    void setMinGradient(const double value) { min_gradient = value; }
+    double getMinGradient() const { return min_gradient; }
+
+    /// @brief Use default optimizer params
+    void setDefaults() override
     {
-        min_gradient = value;
+        min_gradient = 0.01;
+        alpha = 0.001;
+        beta = 0.9;
+
+        max_iteration_times = 10000;
+        iteration_times = 0;
+        verbosity = SUMMARY;
     }
 
-    double min_gradient = 0.01; // Gradient threshold to stop the iterations
+    /// @brief print params of optimizer
+    void print(const std::string &str) override
+    {
+        std::cout << str << "\n";
+        std::cout << "*********************************************" << "\n";
+        std::cout << "maximum iterations: " << max_iteration_times << "\n";
+        std::cout << "verbosity: " << verbosityTranslator(verbosity) << "\n";
+        std::cout << "gradient thresthold: " << min_gradient << "\n";
+        std::cout << "Learning rate: " << alpha << "\n";
+        std::cout << "momentum hyper-parameter: " << beta << "\n";
+        std::cout << "*********************************************" << std::endl;
+    }
 
-    double alpha = 0.001; // learning rate
-    double beta = 0.9; // momentum hyper-parameters
+    /// @brief Setters and Getters of params
+    void setAlpha(const double value) { alpha = value; }
+    void setBeta(const double value) { beta = value; }
+
+    double getAlpha() const { return alpha; }
+    double getBeta() const { return beta; }
+
+private:
+    double min_gradient;  // Gradient threshold to stop the iterations
+    double alpha;         // Learning rate
+    double beta;          // Momentum hyper-parameter
 
 };
 }

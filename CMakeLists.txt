@@ -18,14 +18,14 @@ set(HEADERS
     include/Utils/Types.hpp
     include/Utils/Utils.hpp
     include/Utils/Functor.hpp
-    include/Utils/Hessian.hpp
+    include/Utils/Constraint.hpp
 
-    #Optimizer Params Base
+    # Optimizer Params Base
     include/OptimizerParams/OptimizerParamsBase.hpp
     include/OptimizerParams/LineSearchParams.hpp
     include/OptimizerParams/TrustRegionParams.hpp
 
-    #Line search method params
+    # Line search method params
     include/OptimizerParams/SteepestDescentParams.hpp
     include/OptimizerParams/ConjuateGradientParams.hpp
     include/OptimizerParams/MomentumParams.hpp
@@ -35,12 +35,18 @@ set(HEADERS
     include/OptimizerParams/AdaDeltaParams.hpp
     include/OptimizerParams/AdamParams.hpp
     include/OptimizerParams/HookeJeevesParams.hpp
-    include/OptimizerParams/RosenbrockParams.hpp
 
     include/OptimizerParams/NewtonParams.hpp
     include/OptimizerParams/LevenbergMarquardtParams.hpp
     include/OptimizerParams/DFP_Params.hpp
     include/OptimizerParams/BFGS_Params.hpp
+
+    # Constrained optimizer method params
+    include/OptimizerParams/ALM_Params.hpp
+
+    # Constrained optimizer methods
+    include/ConstrainedOptimizer/ConstrainedOptimizerBase.hpp
+    include/ConstrainedOptimizer/ALM_Optimizer.hpp
 
     # Optimizer Base
     include/OptimizerBase/OptimizerBase.hpp
@@ -48,7 +54,6 @@ set(HEADERS
     include/OptimizerBase/TrustRegionOptimizer.hpp
 
     # Line Search Methods
-    include/LineSearchMethods/CyclicCoordinateOptimizer.hpp
     include/LineSearchMethods/SteepestDescentOptimizer.hpp
     include/LineSearchMethods/NewtonOptimizer.hpp
     include/LineSearchMethods/ConjuateGradientOptimizer.hpp
@@ -80,7 +85,6 @@ set(HEADERS
     include/StepsizeSearch/Accurate/FibonacciMethod.hpp
     include/StepsizeSearch/Accurate/BisectionMethod.hpp
     include/StepsizeSearch/Accurate/DichotomousMethod.hpp
-    include/StepsizeSearch/Accurate/NewtonMethod.hpp
 
     # Inaccurate stepsize search
     include/StepsizeSearch/Inaccurate/InaccurateSearchBase.hpp

@@ -28,18 +28,17 @@ protected:
 public:
     /// @brief Constructors
     ConjuateGradientOptimizer() {}
-
     ~ConjuateGradientOptimizer() {}
 
     /// @brief Initialize
     void init(const InputType& initial, FunctorType* f,
-              ConjuateGradientParams* params, StepsizeSearchBase<FunctorType>* ss)
+              ConjuateGradientParams* params)
     {
         this->f = f;
         this->f->setX(initial);
         this->updateValue();
         this->params = params;
-        this->ss = ss;
+        this->initStepsizeMethod(params);
         this->ss->init(this->f);
 
         beta = 0;
@@ -50,32 +49,41 @@ public:
     /// @brief Conjuate Gradient optimization process
     InputType optimize() override
     {
-        this->printInitialConfigurations();
-        this->writer.open("../data/"
-                          "conjuate gradient -- WolfePowell.txt");
+        if (params->getVerbosity() == ConjuateGradientParams::SUMMARY
+                 || params->getVerbosity() == ConjuateGradientParams::DETAIL)
+        {
+            params->print("Conjuate gradient optimization");
+            this->printInitialConfigurations();
+        }
+        //this->writer.open("../data/"
+        //                  "conjuate gradient -- WolfePowell.txt");
         while (true){
             this->updateValueAndJacobian();
-            this->writeInformation();
-            if (params->iteration_times > params->max_iteration_times)
+            //this->writeInformation();
+            if (params->getIterationTimes() > params->getMaxIterations())
             {
                 std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
                 this->printResult();
                 return f->getX();
             }
-            if (f->getJacobian().norm() < params->min_gradient)
+            if (f->getJacobian().norm() < params->getMinGradient())
             {
-                std::cout << "Iteration times: " << params->iteration_times << std::endl;
-                this->printResult();
+                if (params->getVerbosity() == ConjuateGradientParams::SUMMARY
+                    || params->getVerbosity() == ConjuateGradientParams::DETAIL)
+                {
+                    std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
+                    this->printResult();
+                }
                 return f->getX();
             }
             else
             {
-                params->iteration_times++;
+                params->nextIteration();
 
                 g = f->getJacobian();
 
                 // Compute beta
-                if (params->iteration_times == 1)
+                if (params->getIterationTimes()== 1)
                     beta = 0;
                 else
                     beta = (g*g.transpose()/(last_g*last_g.transpose()))(0,0);
@@ -92,12 +100,17 @@ public:
                 last_g = g;
                 last_d = d;
 
-                //this->printProcessInformation();
+                if (params->getVerbosity() == ConjuateGradientParams::DETAIL)
+                {
+                    std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
+                    this->printProcessInformation();
+                }
             }
         }
-        this->writer.close();
+        //this->writer.close();
     }
 
+private:
     ConjuateGradientParams* params;
     JacobianType last_g; // gradient at time k-1
     JacobianType g; // gradient at time k

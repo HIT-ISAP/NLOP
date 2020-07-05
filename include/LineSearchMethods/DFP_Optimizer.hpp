@@ -29,18 +29,17 @@ protected:
 public:
     /// @brief Constructors
     DFP_Optimizer() {}
-
     ~DFP_Optimizer() {}
 
     /// @brief Initialize
     void init(const InputType& initial, FunctorType* f,
-              DFP_Params* params, StepsizeSearchBase<FunctorType>* ss)
+              DFP_Params* params)
     {
         this->f = f;
         this->f->setX(initial);
         this->updateValue();
         this->params = params;
-        this->ss = ss;
+        this->initStepsizeMethod(params);
         this->ss->init(this->f);
 
         delta_x.setZero(InputType::RowsAtCompileTime, 1);
@@ -51,33 +50,42 @@ public:
     /// @brief DFP optimization process
     InputType optimize() override
     {
-        this->printInitialConfigurations();
-        this->writer.open("../data/"
-                          "DFP -- GoldenSection.txt");
+        if (params->getVerbosity() == DFP_Params::SUMMARY
+                 || params->getVerbosity() == DFP_Params::DETAIL)
+        {
+            params->print("DFP optimization");
+            this->printInitialConfigurations();
+        }
+        //this->writer.open("../data/"
+        //                  "DFP -- GoldenSection.txt");
         while (true) {
             this->updateValueAndJacobian();
-            this->writeInformation();
-            if (params->iteration_times > params->max_iteration_times)
+            //this->writeInformation();
+            if (params->getIterationTimes() > params->getMaxIterations())
             {
                 std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
                 this->printResult();
                 return f->getX();
             }
-            if (f->getJacobian().norm() < params->min_gradient)
+            if (f->getJacobian().norm() < params->getMinGradient())
             {
-                std::cout << "Iteration times: " << params->iteration_times << std::endl;
-                this->printResult();
+                if (params->getVerbosity() == DFP_Params::SUMMARY
+                         || params->getVerbosity() == DFP_Params::DETAIL)
+                {
+                    std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
+                    this->printResult();
+                }
                 return f->getX();
             }
             else
             {
-                params->iteration_times++;
+                params->nextIteration();
 
                 // Get gradient
                 g = f->getJacobian();
 
                 // Update H
-                if (params->iteration_times == 1)
+                if (params->getIterationTimes() == 1)
                 {
                     H.setIdentity(InputType::RowsAtCompileTime, InputType::RowsAtCompileTime);
                 }
@@ -103,12 +111,17 @@ public:
                 g_last = g;
                 x_last = x;
 
-                //this->printProcessInformation();
+                if (params->getVerbosity() == DFP_Params::DETAIL)
+                {
+                    std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
+                    this->printProcessInformation();
+                }
             }
         }
-        this->writer.close();
+        //this->writer.close();
     }
 
+private:
     DFP_Params* params; // optimizer params
 
     JacobianType g; // gradient at time k

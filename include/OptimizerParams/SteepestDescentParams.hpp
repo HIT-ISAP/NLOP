@@ -10,25 +10,36 @@ class SteepestDescentParams: public LineSearchParams
 {
 public:
     /// @brief Constructor
-    SteepestDescentParams() {}
+    SteepestDescentParams() { setDefaults(); }
 
     /// @brief Use default optimizer params
-    void setDefaults()
+    void setDefaults() override
     {
         max_iteration_times = 10000;
         iteration_times = 0;
-        verbosity = false;
-        stepsize_search_method = GOLDENSECTION;
+        verbosity = SUMMARY;
+        stepsize_method = WOLFEPOWELL;
         min_gradient = 0.01;
     }
 
-    /// @brief Set mininum gradient to control iterations to stop
-    void setMinGradient(const double value)
+    /// @brief print params of optimizer
+    void print(const std::string &str) override
     {
-        min_gradient = value;
+        std::cout << str << "\n";
+        std::cout << "*********************************************" << "\n";
+        std::cout << "maximum iterations: " << max_iteration_times << "\n";
+        std::cout << "verbosity: " << verbosityTranslator(verbosity) << "\n";
+        std::cout << "stepsize method: " << StepsizeMethodTranslator(stepsize_method) << "\n";
+        std::cout << "gradient thresthold: " << min_gradient << "\n";
+        std::cout << "*********************************************" << std::endl;
     }
 
-    double min_gradient = 0.01; // Gradient threshold to stop the iterations
+    /// @brief Set and get mininum gradient to control iterations to stop
+    void setMinGradient(const double value) { min_gradient = value; }
+    double getMinGradient() const { return min_gradient; }
+
+private:
+    double min_gradient; // Gradient threshold to stop the iterations (default = 0.01)
 
 };
 }

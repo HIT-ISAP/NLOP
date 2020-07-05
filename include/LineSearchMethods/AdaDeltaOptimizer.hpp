@@ -48,33 +48,46 @@ public:
     /// @brief AdaDelta optimization process
     InputType optimize() override
     {
-        this->printInitialConfigurations();
+        if (params->getVerbosity() == AdaDeltaParams::SUMMARY
+                 || params->getVerbosity() == AdaDeltaParams::DETAIL)
+        {
+            params->print("AdaDelta optimization");
+            this->printInitialConfigurations();
+        }
         this->writer.open("../data/"
                           "AdaDelta.txt");
         while (true) {
             this->updateValueAndJacobian();
             this->writeInformation();
-            if (params->iteration_times > params->max_iteration_times)
+            if (params->getIterationTimes() > params->getMaxIterations())
             {
                 std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
                 this->printResult();
                 return f->getX();
             }
-            if (f->getJacobian().norm() < params->min_gradient)
+            if (f->getJacobian().norm() < params->getMinGradient())
             {
-                std::cout << "Iteration times: " << params->iteration_times << std::endl;
-                this->printResult();
+                if (params->getVerbosity() == AdaDeltaParams::SUMMARY
+                         || params->getVerbosity() == AdaDeltaParams::DETAIL)
+                {
+                    std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
+                    this->printResult();
+                }
                 return f->getX();
             }
             else
             {
-                params->iteration_times++;
-                this->printProcessInformation();
+                params->nextIteration();
+                if (params->getVerbosity() == AdaDeltaParams::DETAIL)
+                {
+                    std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
+                    this->printProcessInformation();
+                }
 
                 x = f->getX();
                 g = f->getJacobian();
 
-                if (params->iteration_times < 1000)
+                if (params->getIterationTimes() < 1000)
                 {
                     d = -g;
                     stepsize = ss->search(d);
@@ -82,20 +95,19 @@ public:
 
                     for (int i = 0; i < InputType::RowsAtCompileTime; ++i)
                     {
-                        s[i] = params->gamma * s_last[i] + (1 - params->gamma) * g[i] * g[i];
-                        s_dx[i] = params->gamma * s_dx_last[i] + (1 - params->gamma) * dx[i] *dx[i];
+                        s[i] = params->getGamma() * s_last[i] + (1 - params->getGamma()) * g[i] * g[i];
+                        s_dx[i] = params->getGamma() * s_dx_last[i] + (1 - params->getGamma()) * dx[i] *dx[i];
                     }
                 }
                 else
                 {
                     for (int i = 0; i < InputType::RowsAtCompileTime; ++i)
                     {
-                        s[i] = params->gamma * s_last[i] + (1 - params->gamma) * g[i] * g[i];
-                        dx[i] = -sqrt(s_dx_last[i]) / (sqrt(s[i]) + params->epsilon) * g[i];
-                        s_dx[i] = params->gamma * s_dx_last[i] + (1 - params->gamma) * dx[i] *dx[i];
+                        s[i] = params->getGamma() * s_last[i] + (1 - params->getGamma()) * g[i] * g[i];
+                        dx[i] = -sqrt(s_dx_last[i]) / (sqrt(s[i]) + params->getEpsilon()) * g[i];
+                        s_dx[i] = params->getGamma() * s_dx_last[i] + (1 - params->getGamma()) * dx[i] *dx[i];
                     }
                 }
-
                 x_next = x + dx;
 
                 f->setX(x_next);
@@ -108,14 +120,14 @@ public:
 
 private:
     AdaDeltaParams* params;
-    JacobianType s; // cumulative sum of squares of gradients
-    JacobianType s_last; // cumulative sum of squares of gradients at last time
-    InputType x; // x at time k
-    InputType x_next; // x at time k+1
+    JacobianType s;         // cumulative sum of squares of gradients
+    JacobianType s_last;    // cumulative sum of squares of gradients at last time
+    InputType x;            // x at time k
+    InputType x_next;       // x at time k+1
     InputType dx;
     InputType s_dx;
     InputType s_dx_last;
-    JacobianType g; // gradient at time k
+    JacobianType g;         // gradient at time k
 
 };
 }

@@ -35,29 +35,37 @@ public:
         this->f->setX(initial);
         this->updateValue();
         this->params = params;
-        epsilon = params->init_epsilon;
+        epsilon = params->getInitEpsilon();
         I.setIdentity(HessianType::RowsAtCompileTime, HessianType::ColsAtCompileTime);
     }
 
     /// @brief L-M optimization process
     InputType optimize() override
     {
-        this->printInitialConfigurations();
+        if (params->getVerbosity() == LevenbergMarquardtParams::SUMMARY
+                 || params->getVerbosity() == LevenbergMarquardtParams::DETAIL)
+        {
+            params->print("L-M optimization");
+            this->printInitialConfigurations();
+        }
         this->writer.open("../data/"
                           "LevenbergMarquardt.txt");
         while (true) {
             this->updateValueAndJacobian();
             this->writeInformation();
-
-            if (params->iteration_times > params->max_iteration_times)
+            if (params->getIterationTimes() > params->getMaxIterations())
             {
                 std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
                 return f->getX();
             }
             else
             {
-                params->iteration_times++;
-                //this->printProcessInformation();
+                params->nextIteration();
+                if (params->getVerbosity() == LevenbergMarquardtParams::DETAIL)
+                {
+                    std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
+                    this->printProcessInformation();
+                }
 
                 x = f->getX();
                 g = f->getJacobian();
@@ -72,10 +80,14 @@ public:
 
                 delta_x = H_m.llt().solve(-g.transpose());
 
-                if (delta_x.norm() < params->min_delta_x)
+                if (delta_x.norm() < params->getMinDeltaX())
                 {
-                    std::cout << "Iteration times: " << params->iteration_times << std::endl;
-                    this->printResult();
+                    if (params->getVerbosity() == LevenbergMarquardtParams::SUMMARY
+                             || params->getVerbosity() == LevenbergMarquardtParams::DETAIL)
+                    {
+                        std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
+                        this->printResult();
+                    }
                     return f->getX();
                 }
 

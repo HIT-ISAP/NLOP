@@ -39,34 +39,46 @@ public:
     /// @brief Newton optimization process
     InputType optimize() override
     {
-        this->printInitialConfigurations();
+        if (params->getVerbosity() == NewtonParams::SUMMARY
+                 || params->getVerbosity() == NewtonParams::DETAIL)
+        {
+            params->print("Newton's method optimization");
+            this->printInitialConfigurations();
+        }
         this->writer.open("../data/"
                           "Newton.txt");
         while (true){
             this->updateValueAndJacobian();
             this->writeInformation();
-            if (params->iteration_times > params->max_iteration_times)
+            if (params->getIterationTimes() > params->getMaxIterations())
             {
                 std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
                 return f->getX();
             }
             else
             {
-                params->iteration_times++;
-                //this->printProcessInformation();
+                params->nextIteration();
+                if (params->getVerbosity() == NewtonParams::DETAIL)
+                {
+                    std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
+                    this->printProcessInformation();
+                }
 
                 x = f->getX();
                 g = f->getJacobian();
 
                 delta_x = H(x).inverse() * g.transpose();
 
-                if (delta_x.norm() < params->min_delta_x)
+                if (delta_x.norm() < params->getMinDeltaX())
                 {
-                    std::cout << "Iteration times: " << params->iteration_times << std::endl;
-                    this->printResult();
+                    if (params->getVerbosity() == NewtonParams::SUMMARY
+                             || params->getVerbosity() == NewtonParams::DETAIL)
+                    {
+                        std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
+                        this->printResult();
+                    }
                     return f->getX();
                 }
-
                 f->setX(x - delta_x);
             }
         }
@@ -76,10 +88,10 @@ public:
 private:
     NewtonParams* params;
 
-    HessianFunctorType H;
-    InputType delta_x;
+    HessianFunctorType H; // Hessian matrix
+    InputType delta_x;    // Delta x for every step
     InputType x;
-    JacobianType g;
+    JacobianType g;       // Jacobian
 };
 }
 

@@ -3,6 +3,8 @@
 
 #include <OptimizerBase/OptimizerBase.hpp>
 
+#include <OptimizerParams/LineSearchParams.hpp>
+
 #include <StepsizeSearch/Accurate/DichotomousMethod.hpp>
 #include <StepsizeSearch/Accurate/FibonacciMethod.hpp>
 #include <StepsizeSearch/Accurate/GoldenSectionMethod.hpp>
@@ -36,9 +38,34 @@ public:
         //delete stepsize_searcher;
     }
 
+    void initStepsizeMethod(LineSearchParams* params)
+    {
+        switch (params->getStepsizeMethod()) {
+        case LineSearchParams::GOLDENSECTION:
+            ss = new GoldSectionMethod<FunctorType>;
+            break;
+        case LineSearchParams::DICHOTOMOUS:
+            ss = new DichotomousMethod<FunctorType>;
+            break;
+        case LineSearchParams::FIBONACCI:
+            ss = new FibonacciMethod<FunctorType>;
+            break;
+        case LineSearchParams::ARMIJO:
+            ss = new ArmijoMethod<FunctorType>;
+            break;
+        case LineSearchParams::GOLDSTEIN:
+            ss = new GoldsteinMethod<FunctorType>;
+            break;
+        case LineSearchParams::WOLFEPOWELL:
+            ss = new WolfePowellMethod<FunctorType>;
+            break;
+        default:
+            ss = new WolfePowellMethod<FunctorType>;
+            break;
+        }
+    }
+
 protected:
-    //AccurateSearchBase<FunctorType>* stepsize_searcher; // Stepsize search method
-    //InaccurateSearchBase<FunctorType>* inaccurate_stepsize;
     StepsizeSearchBase<FunctorType>* ss; // Stepsize searcher
     JacobianType d; //The direction of descent
     T stepsize; // Stepsize for one iteration
