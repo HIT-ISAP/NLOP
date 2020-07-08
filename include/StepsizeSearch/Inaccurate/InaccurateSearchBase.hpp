@@ -18,25 +18,14 @@ public:
     using typename Base::ValueType;
     using typename Base::JacobianType;
 
-    using Base::iteration_times;
-    using Base::max_iteration_times;
     using Base::f;
 
-    void reset()
-    {
-        iteration_times = 0;
-    }
+    void reset(StepsizeSearchParamsBase* params) override { params->setIterationTimes(0); }
 
-    void printResult()
-    {
-        std::cout << "Inaccurate stepsize: " << lambda << std::endl;
-        std::cout << "Iteration times: " << iteration_times << std::endl;
-    }
+    //void init(StepsizeSearchParamsBase *params) override { params->setIterationTimes(0); }
 
-    //FunctorType* f; // Target function
-    T alpha = 1.5; // Increase factor
-    T beta = 0.5; // Decrease factor
-    T lambda; // Stepsize
+protected:
+    T lambda;       // stepsize
 };
 }
 

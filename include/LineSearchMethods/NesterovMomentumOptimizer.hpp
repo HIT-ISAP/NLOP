@@ -43,65 +43,51 @@ public:
     /// @brief Nesterov momentum optimization process
     InputType optimize() override
     {
-        if (params->getVerbosity() == NesterovMomentumParams::SUMMARY
-                 || params->getVerbosity() == NesterovMomentumParams::DETAIL)
-        {
-            params->print("Nesterov Momentum optimization");
-            this->printInitialConfigurations();
-        }
-        //this->writer.open("../data/"
-        //                  "nesterov momentum.txt");
+        this->printInitialConfigurations(params);
+        if (params->isLogFile())
+            this->writer.open("../data/Nesterov momentum.txt");
         while (true) {
             this->updateValueAndJacobian();
-            //this->writeInformation();
+            this->printProcessInformation(params);
+            if (this->writer.is_open())
+                this->writeInformation();
             if (params->getIterationTimes() > params->getMaxIterations())
             {
                 std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
-                this->printResult();
                 return f->getX();
             }
             if (f->getJacobian().norm() < params->getMinGradient())
             {
-                if (params->getVerbosity() == NesterovMomentumParams::SUMMARY
-                         || params->getVerbosity() == NesterovMomentumParams::DETAIL)
-                {
-                    std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
-                    this->printResult();
-                }
+                this->printResult(params);
                 return f->getX();
             }
             else
             {
-                params->nextIteration();
-
                 // compute momentum v
                 x_next = f->getX() + params->getBeta() * v_last.transpose();
                 computeValueAndJacobian(x_next, &y_next, &jac_next);
                 v = params->getBeta() * v_last - params->getAlpha() * jac_next;
 
+                // update x
                 f->setX(f->getX() + v.transpose());
                 v_last = v;
 
-                if (params->getVerbosity() == NesterovMomentumParams::DETAIL)
-                {
-                    std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
-                    this->printProcessInformation();
-                }
+                params->nextIteration();
             }
         }
-        //this->writer.close();
+        if (this->writer.is_open())
+            this->writer.close();
     }
 
 private:
     NesterovMomentumParams* params;
-    JacobianType v; // gradient momentum at time k
-    JacobianType v_last; // gradient momentum at time k-1
+    JacobianType v;         // gradient momentum at time k
+    JacobianType v_last;    // gradient momentum at time k-1
     InputType x;
-    //JacobianType v_next;
 
-    JacobianType jac_next;
-    ValueType y_next;
-    InputType x_next;
+    JacobianType jac_next;  // predicted Jacobian at time k+1
+    ValueType y_next;       // predicted f(x) at time k+1
+    InputType x_next;       // predicted x at time k+1
 };
 }
 

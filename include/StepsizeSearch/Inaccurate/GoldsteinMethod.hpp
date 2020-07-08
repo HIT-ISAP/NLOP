@@ -2,6 +2,7 @@
 #define GOLDSTEINMETHOD_HPP
 
 #include <StepsizeSearch/Inaccurate/InaccurateSearchBase.hpp>
+#include <StepsizeSearchParams/GoldsteinParams.hpp>
 
 namespace NLOP {
 
@@ -15,66 +16,49 @@ protected:
     using typename InaccurateBase::ValueType;
     using typename InaccurateBase::JacobianType;
 
-    using InaccurateBase::alpha;
-    using InaccurateBase::beta;
     using InaccurateBase::lambda;
-
-    using InaccurateBase::iteration_times;
-    using InaccurateBase::max_iteration_times;
     using InaccurateBase::f;
 
 public:
     /// @brief Constructor
-    GoldsteinMethod() {}
+    GoldsteinMethod() { params = new GoldsteinParams; }
+    GoldsteinMethod(GoldsteinParams* given_params) { params = given_params; }
 
-    /// @brief Set rho
-    void setRho(T new_value)
-    {
-        rho = new_value;
-    }
-
-    /// @brief Initialization for stepsize search
-    /// @param f Target function
-    void init(FunctorType* f) override
-    {
-        this->f = f;
-        this->alpha = alpha;
-        this->beta = beta;
-        this->max_lambda = max_lambda;
-    }
+    ~GoldsteinMethod() { delete params; }
 
     /// @brief Search inaccurate stepsize iteratively using Goldstein method
     /// @param d Direction for stepsize searching
     T search(JacobianType& d) override
     {
-        // Initial stepsize
-        lambda = init_lambda_factor * max_lambda;
+        this->reset(params);
+        // get params
+        auto max_iteration_times = params->getMaxIterations();
+        auto alpha = params->getIncreaseFactor();
+        auto beta = params->getDecreaseFactor();
+        auto rho = params->getRho();
+        // initial stepsize
+        lambda = params->getInitLambdaFactor() * params->getUpperBound();
         while (true)
         {
-            if (iteration_times > max_iteration_times)
+            if (params->getIterationTimes() > max_iteration_times)
             {
                 std::cerr << "Beyong the max iteration times!" << std::endl;
                 return lambda;
             }
-            iteration_times++;
-
-            lhs = (*f)(f->getX()+lambda*d.transpose()) - f->getY();
-
+            params->nextIteration();
+            lhs = (*f)(f->getX() + lambda * d.transpose()) - f->getY();
             rhs1 = (rho * f->getJacobian() * d.transpose() * lambda)(0,0);
-
-            // Condition (1): f(x(k+1)) - f(x(k)) <= rho * J(x(k)) * lambda * d
-            // Condition (2): f(x(k+1)) - f(x(k)) >= (1 - rho) * J(x(k)) * lambda * d
-
-            // If condition (1) is satisfied
+            // condition (1): f(x(k+1)) - f(x(k)) <= rho * J(x(k)) * lambda * d
+            // condition (2): f(x(k+1)) - f(x(k)) >= (1 - rho) * J(x(k)) * lambda * d
+            // if condition (1) is satisfied
             if (lhs <= rhs1)
             {
                 rhs2 = ((1-rho) * f->getJacobian() * d.transpose() * lambda)(0,0);
-
-                // If condition (1) and (2) are satisfied simultaneously, stop
+                // if condition (1) and (2) are satisfied simultaneously, stop
                 if (lhs >= rhs2)
                 {
                     //this->printResult();
-                    this->reset();
+                    this->reset(params);
                     return lambda;
                 }
                 else
@@ -92,14 +76,11 @@ public:
     }
 
 private:
-    T rho = 0.1;
-    T max_lambda = 1; // max stepsize
+    T lhs;      // left hand side of condition (1) and (2)
+    T rhs1;     // right hand side of condition (1)
+    T rhs2;     // right hand side of condition (2)
 
-    T init_lambda_factor = 0.1; // initial stepsize factor
-
-    T lhs; // left hand side of condition (1) and (2)
-    T rhs1; // right hand side of condition (1)
-    T rhs2; // right hand side of condition (2)
+    GoldsteinParams* params;
 };
 }
 

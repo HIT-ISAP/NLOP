@@ -20,12 +20,13 @@ public:
         verbosity = SUMMARY;
         stepsize_method = WOLFEPOWELL;
         min_gradient = 0.01;
+        log_file = false;
     }
 
     /// @brief print params of optimizer
-    void print(const std::string &str) override
+    void print() override
     {
-        std::cout << str << "\n";
+        std::cout << "Steepest Descent Optimization" << "\n";
         std::cout << "*********************************************" << "\n";
         std::cout << "maximum iterations: " << max_iteration_times << "\n";
         std::cout << "verbosity: " << verbosityTranslator(verbosity) << "\n";

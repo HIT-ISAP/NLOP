@@ -42,17 +42,14 @@ public:
     /// @brief L-M optimization process
     InputType optimize() override
     {
-        if (params->getVerbosity() == LevenbergMarquardtParams::SUMMARY
-                 || params->getVerbosity() == LevenbergMarquardtParams::DETAIL)
-        {
-            params->print("L-M optimization");
-            this->printInitialConfigurations();
-        }
-        this->writer.open("../data/"
-                          "LevenbergMarquardt.txt");
+        this->printInitialConfigurations(params);
+        if (params->isLogFile())
+            this->writer.open("../data/LevenbergMarquardt.txt");
         while (true) {
             this->updateValueAndJacobian();
-            this->writeInformation();
+            this->printProcessInformation(params);
+            if (this->writer.is_open())
+                this->writeInformation();
             if (params->getIterationTimes() > params->getMaxIterations())
             {
                 std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
@@ -60,19 +57,12 @@ public:
             }
             else
             {
-                params->nextIteration();
-                if (params->getVerbosity() == LevenbergMarquardtParams::DETAIL)
-                {
-                    std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
-                    this->printProcessInformation();
-                }
-
                 x = f->getX();
                 g = f->getJacobian();
 
                 H_m = H(x) + epsilon * I;
 
-                if (!isPosDef())
+                if (!isPosDef()) // if H_m is not positive definite, increase damping factor
                 {
                     epsilon *= 4;
                     continue;
@@ -82,50 +72,46 @@ public:
 
                 if (delta_x.norm() < params->getMinDeltaX())
                 {
-                    if (params->getVerbosity() == LevenbergMarquardtParams::SUMMARY
-                             || params->getVerbosity() == LevenbergMarquardtParams::DETAIL)
-                    {
-                        std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
-                        this->printResult();
-                    }
+                    this->printResult(params);
                     return f->getX();
                 }
 
                 x_next = x + delta_x;
 
+                // compute the error of Taylor expansion
                 R = ((*f)(x_next) - (*f)(x)) /
                         (0.5 * delta_x.transpose() * H(x) * delta_x + g * delta_x)(0, 0);
 
                 if (R < 0)
                     ; /// @todo
-                else if (R < 0.25)
+                else if (R < 0.25)   // the error of Taylor expansion is too big, reduce the stepsize
                     epsilon *= 4;
-                else if (R > 0.75)
+                else if (R > 0.75)   // the error of Taylor expansion is acceptable, increase the stepsize
                     epsilon *= 0.5;
 
+                // update x
                 f->setX(x_next);
+                params->nextIteration();
             }
         }
-        this->writer.close();
+        if (this->writer.is_open())
+            this->writer.close();
     }
 
 private:
     LevenbergMarquardtParams* params;
 
-    T epsilon;
-    T R;
+    T epsilon;              // damping factor
+    T R;                    // param to describe the fitting degree of second order Taylor expansion
+    HessianFunctorType H;   // Hessian matrix
+    HessianType H_m;        // damped hessian matrix
+    HessianType I;          // identity matrix
+    InputType delta_x;      // delta x from time k to k+1
+    InputType x;            // x at time k
+    InputType x_next;       // x at time k+1
+    JacobianType g;         // Jacobian
 
-    HessianFunctorType H;
-
-    HessianType H_m;
-    HessianType I;
-
-    InputType delta_x;
-    InputType x;
-    InputType x_next;
-
-    JacobianType g;
-
+    // check a square matrix whether is positive definite
     bool isPosDef()
     {
         Eigen::EigenSolver<Eigen::MatrixXd> es(H_m);

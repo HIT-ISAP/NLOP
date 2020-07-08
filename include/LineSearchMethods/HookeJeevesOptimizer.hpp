@@ -43,18 +43,17 @@ public:
     /// @brief Hooke & Jeeves optimization method
     InputType optimize() override
     {
-        if (params->getVerbosity() == HookeJeevesParams::SUMMARY
-                || params->getVerbosity() == HookeJeevesParams::DETAIL)
+        this->printInitialConfigurations(params);
+        if (params->isLogFile())
         {
-            params->print("Hooke & Jeeves optimization");
-            this->printInitialConfigurations();
+            this->writer.open("../data/Hooke&Jeeves.txt");
+            this->writeInformation();
         }
-        this->writer.open("../data/"
-                          "Hooke Jeeves.txt");
         x = f->getX();
         y = x;
         step1();
-        this->writer.close();
+        if (this->writer.is_open())
+            this->writer.close();
     }
 
 private:
@@ -73,17 +72,12 @@ private:
             d[i] = 1;
 
             if ((*f)(y + stepsize * d.transpose()) < (*f)(y))
-            {
                 y_next = y + stepsize * d.transpose();
-            }
             else if ((*f)(y - stepsize * d.transpose()) < (*f)(y))
-            {
                 y_next = y - stepsize * d.transpose();
-            }
             else
-            {
                 y_next = y;
-            }
+
             y = y_next;
         }
         step2();
@@ -103,11 +97,10 @@ private:
         x_next = y_next;
         f->setX(x_next);
         this->updateValue();
-        if (params->getVerbosity() == HookeJeevesParams::DETAIL)
-        {
-            std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
-            this->printProcessInformation();
-        }
+        this->printProcessInformation(params);
+        if (this->writer.is_open())
+            this->writeInformation();
+
         y = x_next + params->getAlpha() * (x_next - x);
         x = x_next;
         step1();
@@ -120,14 +113,10 @@ private:
             params->nextIteration();
             f->setX(x_next);
             this->updateValue();
-            if (params->getVerbosity() == HookeJeevesParams::SUMMARY
-                    || params->getVerbosity() == HookeJeevesParams::DETAIL)
-            {
-                std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
-                std::cout << "Optimization Finished!" << std::endl;
-                std::cout << "Optimal x: (" << f->getX().transpose() << ")" << std::endl;
-                std::cout << "f(x) = " << f->getY() << std::endl;
-            }
+            if (this->writer.is_open())
+                this->writeInformation();
+
+            this->printResult(params);
             return x_next;
         }
         else

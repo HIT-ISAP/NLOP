@@ -4,7 +4,6 @@
 #include <StepsizeSearch/Accurate/AccurateSearchBase.hpp>
 
 namespace NLOP {
-
 /// @class NLOP::Dichotomous Method
 /// @brief Dichotomous Method for General Continues Functions
 /// @param FunctorType Target function
@@ -20,17 +19,20 @@ protected:
 
     using AccurateBase::alpha;
     using AccurateBase::beta;
-    using AccurateBase::epsilon;
     using AccurateBase::lambda;
 
-    using AccurateBase::iteration_times;
-    using AccurateBase::max_iteration_times;
     using AccurateBase::f;
 
 public:
-    void printProcess() override
+    /// @brief Constructors
+    DichotomousMethod() { params = new AccurateSearchParams; }
+    DichotomousMethod(AccurateSearchParams* given_params) { params = given_params; }
+
+    ~DichotomousMethod() { delete params; }
+
+    void printProcess()
     {
-        std::cout << "interative times: " << iteration_times
+        std::cout << "interative times: " << params->getIterationTimes()
                   << "  " << "[alpha, lambda, mu, beta]: "
                   << "[" << alpha << ", " << lambda << ", "
                   << mu << ", " << beta << "]" << std::endl;
@@ -38,37 +40,35 @@ public:
 
     T search(JacobianType& d) override
     {
-        epsilon = 0.0005;
+        this->reset(params);
+        auto epsilon = params->getStepsizeAccuracy();
         lambda = (alpha + beta)/2 - epsilon;
         mu = (alpha + beta)/2 + epsilon;
 
-        max_iteration_times = int(std::log2((beta - alpha)/epsilon));
+        params->setMaxIterations(int(std::log2((beta - alpha)/epsilon)));
 
         while (true)
         {
             //this->printProcess();
-
-            // Stoping condition: (alpha - beta) < 2*epsilon or reach max iteration times
-            if (iteration_times == max_iteration_times)
+            // stoping condition: (alpha - beta) < 2*epsilon or reach max iteration times
+            if (params->getIterationTimes() == params->getMaxIterations())
             {
                 auto result = lambda;
-                //std::cout << "Finished! Optimal lambda: " << result << std::endl;
-                this->reset();
+                this->reset(params);
                 return result;
             }
-            iteration_times++;
-
-            // If f(x + lambda*d) < f(x + mu*d)
-            if ((*f)(f->getX()+lambda*d.transpose()) < (*f)(f->getX()+mu*d.transpose()))
+            params->nextIteration();
+            // if f(x + lambda * d) < f(x + mu * d)
+            if ((*f)(f->getX() + lambda * d.transpose()) < (*f)(f->getX() + mu * d.transpose()))
             {
-                // Cut the right half of the interval
+                // cut the right half of the interval
                 beta = mu;
                 lambda = (alpha + beta)/2 - epsilon;
                 mu = (alpha + beta)/2 + epsilon;
             }
             else
             {
-                // Cut the left half of the interval
+                // cut the left half of the interval
                 alpha = lambda;
                 lambda = (alpha + beta)/2 - epsilon;
                 mu = (alpha + beta)/2 + epsilon;
@@ -77,7 +77,8 @@ public:
     }
 
 protected:
-    T mu;
+    T mu;       // observation variable
+    AccurateSearchParams* params;
 };
 
 }

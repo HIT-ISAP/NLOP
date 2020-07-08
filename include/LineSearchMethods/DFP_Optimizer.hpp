@@ -29,7 +29,6 @@ protected:
 public:
     /// @brief Constructors
     DFP_Optimizer() {}
-    ~DFP_Optimizer() {}
 
     /// @brief Initialize
     void init(const InputType& initial, FunctorType* f,
@@ -40,7 +39,7 @@ public:
         this->updateValue();
         this->params = params;
         this->initStepsizeMethod(params);
-        this->ss->init(this->f);
+        //this->ss->init(this->f);
 
         delta_x.setZero(InputType::RowsAtCompileTime, 1);
         delta_g.setZero(1, InputType::RowsAtCompileTime);
@@ -50,52 +49,40 @@ public:
     /// @brief DFP optimization process
     InputType optimize() override
     {
-        if (params->getVerbosity() == DFP_Params::SUMMARY
-                 || params->getVerbosity() == DFP_Params::DETAIL)
-        {
-            params->print("DFP optimization");
-            this->printInitialConfigurations();
-        }
-        //this->writer.open("../data/"
-        //                  "DFP -- GoldenSection.txt");
+        this->printInitialConfigurations(params);
+        if (params->isLogFile())
+            this->writer.open("../data/DFP -- "
+                              + params->StepsizeMethodTranslator(params->getStepsizeMethod()) + ".txt");
         while (true) {
             this->updateValueAndJacobian();
-            //this->writeInformation();
+            this->printProcessInformation(params);
+            if (this->writer.is_open())
+                this->writeInformation();
             if (params->getIterationTimes() > params->getMaxIterations())
             {
                 std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
-                this->printResult();
                 return f->getX();
             }
+
             if (f->getJacobian().norm() < params->getMinGradient())
             {
-                if (params->getVerbosity() == DFP_Params::SUMMARY
-                         || params->getVerbosity() == DFP_Params::DETAIL)
-                {
-                    std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
-                    this->printResult();
-                }
+                this->printResult(params);
                 return f->getX();
             }
             else
             {
-                params->nextIteration();
-
                 // Get gradient
                 g = f->getJacobian();
 
                 // Update H
-                if (params->getIterationTimes() == 1)
-                {
+                if (params->getIterationTimes() == 0)
                     H.setIdentity(InputType::RowsAtCompileTime, InputType::RowsAtCompileTime);
-                }
                 else
                 {
                     delta_g = g - g_last;
                     H = H_last + delta_x * delta_x.transpose() / (delta_x.dot(delta_g))
                         - H_last * delta_g.transpose() * delta_g * H_last / ((delta_g * H * delta_g.transpose())(0,0));
                 }
-
                 // Update direction
                 d = -g * H.transpose();
 
@@ -110,30 +97,26 @@ public:
                 H_last = H;
                 g_last = g;
                 x_last = x;
-
-                if (params->getVerbosity() == DFP_Params::DETAIL)
-                {
-                    std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
-                    this->printProcessInformation();
-                }
+                params->nextIteration();
             }
         }
-        //this->writer.close();
+        if (this->writer.is_open())
+            this->writer.close();
     }
 
 private:
-    DFP_Params* params; // optimizer params
+    DFP_Params* params;     // optimizer params
 
-    JacobianType g; // gradient at time k
-    JacobianType g_last; // gradient at time k-1
-    JacobianType delta_g; // difference of g between time k and k-1
+    JacobianType g;         // gradient at time k
+    JacobianType g_last;    // gradient at time k-1
+    JacobianType delta_g;   // difference of g between time k and k-1
 
-    InputType x; // x at time k
-    InputType x_last; // x at time k-1
-    InputType delta_x; // difference of x between time k and k-1
+    InputType x;            // x at time k
+    InputType x_last;       // x at time k-1
+    InputType delta_x;      // difference of x between time k and k-1
 
-    HessianType H; // H at time k
-    HessianType H_last; // H at time k-1
+    HessianType H;          // H at time k
+    HessianType H_last;     // H at time k-1
 };
 }
 

@@ -37,39 +37,47 @@ public:
     }
 
     /// @brief Print optimization result
-    void printResult()
+    void printResult(OptimizerParamsBase* params)
     {
-        std::cout << "Optimization Finished!" << "\n";
-        std::cout << "Optimal x: (" << f->getX().transpose() << ")" << "\n";
-        std::cout << "f(x) = " << f->getY() << "\n";
-        std::cout << "Gradient: (" << f->getJacobian() << ")" << std::endl;
+        if (params->getVerbosity() == OptimizerParamsBase::SUMMARY
+                 || params->getVerbosity() == OptimizerParamsBase::DETAIL)
+        {
+            std::cout << "Optimization Finished!" << "\n";
+            std::cout << "Iteration times: " << params->getIterationTimes() << "\n";
+            std::cout << "Optimal x: (" << f->getX().transpose() << ")" << "\n";
+            std::cout << "f(x) = " << f->getY() << "\n";
+            std::cout << "Gradient: (" << f->getJacobian() << ")" << std::endl;
+        }
     }
 
     /// @brief Print optimization process information
-    void printProcessInformation()
+    void printProcessInformation(OptimizerParamsBase* params)
     {
-        std::cout << "x: (" << f->getX().transpose() << ")" << "\n";
-        std::cout << "f(x) = " << f->getY() << "\n";
-        std::cout << "Gradient: (" << f->getJacobian() << ")" << "\n";
-        std::cout << "*********************************************" << std::endl;
+        if (params->getVerbosity() == OptimizerParamsBase::DETAIL)
+        {
+            std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
+            std::cout << "x: (" << f->getX().transpose() << ")" << "\n";
+            std::cout << "f(x) = " << f->getY() << "\n";
+            std::cout << "Gradient: (" << f->getJacobian() << ")" << "\n";
+            std::cout << "*********************************************" << std::endl;
+        }
     }
 
-    /// @brief Iteratively compute the optimal x
-    virtual InputType optimize() = 0;
-
-    void printInitialConfigurations()
+    /// @brief Print optimizer initial configuration
+    void printInitialConfigurations(OptimizerParamsBase* params)
     {
-        std::cout << "Initial Configurations: " << "\n"
-                  << "x0: (" << f->getX().transpose() << ") \n"
-                  << "f(x0) = " << f->getY() << "\n"
-                  << "*********************************************" << std::endl;
+        if (params->getVerbosity() == OptimizerParamsBase::SUMMARY
+                 || params->getVerbosity() == OptimizerParamsBase::DETAIL)
+        {
+            params->print();
+            std::cout << "Initial Configurations: " << "\n"
+                      << "x0: (" << f->getX().transpose() << ") \n"
+                      << "f(x0) = " << f->getY() << "\n"
+                      << "*********************************************" << std::endl;
+        }
     }
 
-    virtual ~OptimizerBase()
-    {
-        delete f;
-    }
-
+    /// @brief Write information into log files
     void writeInformation()
     {
         writer << f->getX()[0] << " "
@@ -77,10 +85,15 @@ public:
                << f->getY() << "\n";
     }
 
+    /// @brief Iteratively compute the optimal x
+    virtual InputType optimize() = 0;
+
+    virtual ~OptimizerBase() { delete f; }
+
 protected:
-    FunctorType* f; // Target function
+    FunctorType* f;                             // Target function
     Eigen::AutoDiffJacobian<FunctorType> adjac; // Tool to compute value and jacobian
-    std::ofstream writer; // Tool to write information into txt
+    std::ofstream writer;                       // Tool to write information into txt
 
 };
 }

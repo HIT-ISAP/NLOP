@@ -18,14 +18,15 @@ public:
         max_iteration_times = 1000;
         iteration_times = 0;
         verbosity = SUMMARY;
+        log_file = false;
         min_delta_x = 0.0001;
         init_epsilon = 4;
     }
 
     /// @brief print params of optimizer
-    void print(const std::string &str) override
+    void print() override
     {
-        std::cout << str << "\n";
+        std::cout << "Levenberg-Marquardt Optimization" << "\n";
         std::cout << "*********************************************" << "\n";
         std::cout << "maximum iterations: " << max_iteration_times << "\n";
         std::cout << "verbosity: " << verbosityTranslator(verbosity) << "\n";

@@ -33,11 +33,9 @@ protected:
     using Base::f;
 
 public:
-    virtual ~LineSearchOptimizer()
-    {
-        //delete stepsize_searcher;
-    }
+    ~LineSearchOptimizer() { delete ss; }
 
+    /// @brief Initialize stepsize search method
     void initStepsizeMethod(LineSearchParams* params)
     {
         switch (params->getStepsizeMethod()) {
@@ -66,9 +64,9 @@ public:
     }
 
 protected:
-    StepsizeSearchBase<FunctorType>* ss; // Stepsize searcher
-    JacobianType d; //The direction of descent
-    T stepsize; // Stepsize for one iteration
+    StepsizeSearchBase<FunctorType>* ss;    // stepsize searcher
+    JacobianType d;                         // the direction of descent
+    T stepsize;                             // stepsize for one iteration
 
 };
 }

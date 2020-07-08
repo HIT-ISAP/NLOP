@@ -58,6 +58,7 @@ public:
         iteration_times = 0;
         max_iteration_times = 10000;
         verbosity = SUMMARY;
+        log_file = false;
     }
 
     /// @brief Get and set max iteration times
@@ -72,13 +73,18 @@ public:
     void setIterationTimes(size_t value) { iteration_times = value; }
     size_t getIterationTimes() const { return iteration_times; }
 
-    /// @brief recent iteration times + 1
+    /// @brief Enable and disable logging file
+    void enableLog() { log_file = true; }
+    void disableLog() { log_file = false; }
+
+    bool isLogFile() const { return log_file; }
+
+    /// @brief Recent iteration times + 1
     void nextIteration() { iteration_times++; }
 
     /// @brief Print optimizer params
-    virtual void print(const std::string& str)
+    virtual void print()
     {
-        std::cout << str << "\n";
         std::cout << "maximum iterations: " << max_iteration_times << "\n";;
         std::cout << "verbosity: " << verbosityTranslator(verbosity) << std::endl;
     }
@@ -87,6 +93,7 @@ protected:
     size_t iteration_times;     // Record iteration times in the optimization process (initial = 0)
     size_t max_iteration_times; // Maximum iteration times to stop iterating (default 10000)
     Verbosity verbosity;        // How much information of the optimization process expected to be printed (default = SUMMARY)
+    bool log_file;              // Whether to write log file
 
     virtual ~OptimizerParamsBase() {}
 };

@@ -37,61 +37,47 @@ public:
     /// @brief Momentum optimization process
     InputType optimize() override
     {
-        if (params->getVerbosity() == MomentumParams::SUMMARY
-                 || params->getVerbosity() == MomentumParams::DETAIL)
-        {
-            params->print("Momentum optimization");
-            this->printInitialConfigurations();
-        }
-        //this->writer.open("../data/"
-        //                  "Momentum.txt");
+        this->printInitialConfigurations(params);
+        if (params->isLogFile())
+            this->writer.open("../data/Momentum.txt");
         while (true) {
             this->updateValueAndJacobian();
-            //this->writeInformation();
+            this->printProcessInformation(params);
+            if (params->isLogFile())
+                this->writeInformation();
             if (params->getIterationTimes() > params->getMaxIterations())
             {
                 std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
-                this->printResult();
                 return f->getX();
             }
             if (f->getJacobian().norm() < params->getMinGradient())
             {
-                if (params->getVerbosity() == MomentumParams::SUMMARY
-                         || params->getVerbosity() == MomentumParams::DETAIL)
-                {
-                    std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
-                    this->printResult();
-                }
+                this->printResult(params);
                 return f->getX();
             }
             else
             {
-                params->nextIteration();
-
                 g = f->getJacobian();
 
                 // compute momentum v
                 v = params->getBeta() * v_last - params->getAlpha() * g;
 
+                // update x
                 f->setX(f->getX() + v.transpose());
                 v_last = v;
 
-                if (params->getVerbosity() == MomentumParams::DETAIL)
-                {
-                    std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
-                    this->printProcessInformation();
-                }
-
+                params->nextIteration();
             }
         }
-        //this->writer.close();
+        if (this->writer.is_open())
+            this->writer.close();
     }
 
 private:
     MomentumParams* params;
-    JacobianType v; // gradient momentum at time k
-    JacobianType g; // gradient at time k
-    JacobianType v_last; // gradient momentum at time k-1
+    JacobianType v;         // gradient momentum at time k
+    JacobianType g;         // gradient at time k
+    JacobianType v_last;    // gradient momentum at time k-1
 
 };
 }

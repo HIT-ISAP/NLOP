@@ -14,13 +14,10 @@
 #include <LineSearchMethods/DFP_Optimizer.hpp>
 #include <LineSearchMethods/BFGS_Optimizer.hpp>
 
-//#include <ConstrainedOptimizer/ConstrainedOptimizerBase.hpp>
-
 using namespace std;
 
 struct RosenbrockFunctor: public NLOP::Functor<double, 2>
 {
-    //template <typename T1, typename T2, typename T3>
     void operator() (const InputType& x, ValueType* v, JacobianType* _j=0) const
     {
         (*v)[0] = (1 - x[0])*(1 - x[0]) + 100*(x[1] - x[0]*x[0])*(x[1] - x[0]*x[0]);
@@ -60,61 +57,86 @@ int main()
     RosenbrockFunctor* f = new RosenbrockFunctor;
     Eigen::Vector2d initial_x(0, 0);
 
-    //SteepestDescentOptimizer<RosenbrockFunctor> optimizer;
-    //SteepestDescentParams* params= new SteepestDescentParams;
-    //params->setVerbosity("DETAIL");
+    SteepestDescentOptimizer<RosenbrockFunctor> optimizer;
+    SteepestDescentParams* params= new SteepestDescentParams;
+    params->setVerbosity("DETAIL");
     //params->setMaxItertaions(1000);
     //params->setMinGradient(0.1);
-    //params->setStepsizeMethod("ARMIJO");
-    //optimizer.init(initial_x, f, params);
+    params->setStepsizeMethod("WOLFEPOWELL");
+    params->enableLog();
+    optimizer.init(initial_x, f, params);
 
     //ConjuateGradientOptimizer<RosenbrockFunctor> optimizer;
     //ConjuateGradientParams* params = new ConjuateGradientParams;
+    //params->setStepsizeMethod("WOLFEPOWELL");
+    //params->setVerbosity("DETAIL");
+    //params->enableLog();
     //optimizer.init(initial_x, f, params);
 
     //MomentumOptimizer<RosenbrockFunctor> optimizer;
     //MomentumParams* params = new MomentumParams;
+    //params->setVerbosity("DETAIL");
+    //params->enableLog();
     //optimizer.init(initial_x, f, params);
 
     //NesterovMomentumOptimizer<RosenbrockFunctor> optimizer;
     //NesterovMomentumParams* params = new NesterovMomentumParams;
+    //params->setVerbosity("DETAIL");
+    //params->enableLog();
     //optimizer.init(initial_x, f, params);
 
     //AdagradOptimizer<RosenbrockFunctor> optimizer;
     //AdagradParams* params = new AdagradParams;
+    //params->enableLog();
+    //params->setVerbosity("DETAIL");
     //optimizer.init(initial_x, f, params);
 
     //RMSPropOptimizer<RosenbrockFunctor> optimizer;
     //RMSPropParams* params = new RMSPropParams;
+    //params->setVerbosity("DETAIL");
+    //params->enableLog();
     //optimizer.init(initial_x, f, params);
 
     //AdaDeltaOptimizer<RosenbrockFunctor> optimizer;
     //AdaDeltaParams* params = new AdaDeltaParams;
+    //params->enableLog();
+    //params->setSGDTimes(1100);
+    //params->setVerbosity("DETAIL");
     //optimizer.init(initial_x, f, params);
 
     //AdamOptimizer<RosenbrockFunctor> optimizer;
     //AdamParams* params = new AdamParams;
+    //params->enableLog();
     //optimizer.init(initial_x, f, params);
 
     //HookeJeevesOptimizer<RosenbrockFunctor> optimizer;
     //HookeJeevesParams* params = new HookeJeevesParams;
     //params->setVerbosity("DETAIL");
+    //params->enableLog();
     //optimizer.init(initial_x, f, params);
 
     //NewtonOptimizer<RosenbrockFunctor, RosenbrockHessianFunctor> optimizer;
     //NewtonParams* params = new NewtonParams;
+    //params->enableLog();
+    //params->setVerbosity("DETAIL");
     //optimizer.init(initial_x, f, params);
 
-    LevenbergMarquardtOptimizer<RosenbrockFunctor, RosenbrockHessianFunctor> optimizer;
-    LevenbergMarquardtParams* params = new LevenbergMarquardtParams;
-    optimizer.init(initial_x, f, params);
+    //LevenbergMarquardtOptimizer<RosenbrockFunctor, RosenbrockHessianFunctor> optimizer;
+    //LevenbergMarquardtParams* params = new LevenbergMarquardtParams;
+    //params->setVerbosity("DETAIL");
+    //params->enableLog();
+    //optimizer.init(initial_x, f, params);
 
     //DFP_Optimizer<RosenbrockFunctor> optimizer;
     //DFP_Params* params = new DFP_Params;
+    //params->enableLog();
+    //params->setVerbosity("DETAIL");
     //optimizer.init(initial_x, f, params);
 
     //BFGS_Optimizer<RosenbrockFunctor> optimizer;
     //BFGS_Params* params = new BFGS_Params;
+    //params->enableLog();
+    //params->setVerbosity("DETAIL");
     //optimizer.init(initial_x, f, params);
 
     optimizer.optimize();

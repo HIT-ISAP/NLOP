@@ -18,14 +18,15 @@ public:
         max_iteration_times = 1000;
         iteration_times = 0;
         verbosity = SUMMARY;
+        log_file = false;
         stepsize_method = WOLFEPOWELL;
         min_gradient = 0.01;
     }
 
     /// @brief print params of optimizer
-    void print(const std::string &str) override
+    void print() override
     {
-        std::cout << str << "\n";
+        std::cout << "Conjuate Gradient Optimization" << "\n";
         std::cout << "*********************************************" << "\n";
         std::cout << "maximum iterations: " << max_iteration_times << "\n";
         std::cout << "verbosity: " << verbosityTranslator(verbosity) << "\n";

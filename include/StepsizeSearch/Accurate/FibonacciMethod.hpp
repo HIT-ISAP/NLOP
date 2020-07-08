@@ -5,7 +5,6 @@
 #include <Utils/Utils.hpp>
 
 namespace NLOP {
-
 /// @class NLOP::FibonacciMethod
 /// @brief Fibonacci method (t = 0.618)
 /// @param FunctorType Target function type
@@ -21,57 +20,50 @@ protected:
 
     using AccurateBase::alpha;
     using AccurateBase::beta;
-    using AccurateBase::epsilon;
     using AccurateBase::lambda;
 
-    using AccurateBase::iteration_times;
-    using AccurateBase::max_iteration_times;
     using AccurateBase::f;
 
 public:
-    void printProcess() override
+    /// @brief Constructors
+    FibonacciMethod() { params = new AccurateSearchParams; }
+    FibonacciMethod(AccurateSearchParams* given_params) { params = given_params; }
+    ~FibonacciMethod() { delete params; }
+
+    void printProcess()
     {
-        std::cout << "interative times: " << iteration_times
+        std::cout << "interative times: " << params->getIterationTimes()
                   << "  " << "[alpha, lambda, mu, beta]: "
                   << "[" << alpha << ", " << lambda << ", "
                   << mu << ", " << beta << "]" << std::endl;
     }
 
-    void reset() override
-    {
-        alpha = 0;
-        beta = 1;
-        iteration_times = 0;
-        n = 20;
-    }
-
     T search(JacobianType& d) override
     {
+        this->reset(params);
+        n = params->getMaxIterations();
         t = fibonacci(n-1)/fibonacci(n);
         lambda = alpha + (1 - t) * (beta - alpha);
         mu = alpha + t * (beta - alpha);
         while (true)
         {
             //this->printProcess();
-            if (iteration_times > n)
+            if (params->getIterationTimes() > params->getMaxIterations())
             {
                 std::cout << "Beyong max iteration times" << std::endl;
-                this->reset();
+                this->reset(params);
                 return (beta + alpha)/2;
             }
-
-            // Stopping condition: (alpha - beta) < epsilon
-            if (beta - alpha < epsilon)
+            // stopping condition: (alpha - beta) < epsilon
+            if (beta - alpha < params->getStepsizeAccuracy())
             {
                 auto result = (beta + alpha)/2;
-                //std::cout << "Finished! Optimal lambda: " << result << std::endl;
-                this->reset();
+                this->reset(params);
                 return result;
             }
-            iteration_times++;
-
-            // If f(x + lambda*d) > f(x + mu*d)
-            if ((*f)(f->getX()+lambda*d.transpose()) > (*f)(f->getX()+mu*d.transpose()))
+            params->nextIteration();
+            // if f(x + lambda * d) > f(x + mu * d)
+            if ((*f)(f->getX() + lambda * d.transpose()) > (*f)(f->getX() + mu * d.transpose()))
             {
                 alpha = lambda;
                 lambda = mu;
@@ -88,16 +80,16 @@ public:
                 std::cerr << "n is too small, please choose a bigger n and try again" << std::endl;
                 return 0;
             }
-            // Update reduction ratio;
+            // update reduction ratio;
             t = fibonacci(n-1)/fibonacci(n);
         }
     }
 
 private:
-    int n = 20; // The expected index of Fibonacci array (default = 13)
-
-    T mu; // Observation variable
-    T t; // Reduction ratio
+    size_t n;   // the expected index of Fibonacci array (default = 13)
+    T mu;       // observation variable
+    T t;        // reduction ratio
+    AccurateSearchParams* params;
 
 };
 }

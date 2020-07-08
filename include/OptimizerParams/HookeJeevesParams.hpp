@@ -22,12 +22,13 @@ public:
         max_iteration_times = 10000;
         iteration_times = 0;
         verbosity = SUMMARY;
+        log_file = false;
     }
 
     /// @brief print params of optimizer
-    void print(const std::string &str) override
+    void print() override
     {
-        std::cout << str << "\n";
+        std::cout << "Hooke&Jeeves Optimization" << "\n";
         std::cout << "*********************************************" << "\n";
         std::cout << "maximum iterations: " << max_iteration_times << "\n";
         std::cout << "verbosity: " << verbosityTranslator(verbosity) << "\n";

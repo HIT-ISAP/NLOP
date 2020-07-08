@@ -23,22 +23,25 @@ public:
         alpha = 0.01;
         gamma = 0.9;
         epsilon = 1e-8;
+        sgd_times = 1000;
 
         max_iteration_times = 10000;
         iteration_times = 0;
         verbosity = SUMMARY;
+        log_file = false;
     }
 
     /// @brief print params of optimizer
-    void print(const std::string &str) override
+    void print() override
     {
-        std::cout << str << "\n";
+        std::cout << "AdaDelta Optimization" << "\n";
         std::cout << "*********************************************" << "\n";
         std::cout << "maximum iterations: " << max_iteration_times << "\n";
         std::cout << "verbosity: " << verbosityTranslator(verbosity) << "\n";
         std::cout << "gradient thresthold: " << min_gradient << "\n";
-        std::cout << "Learning rate: " << alpha << "\n";
-        std::cout << "Decay rate: " << gamma << "\n";
+        std::cout << "SGD iteration times: " << sgd_times << "\n";
+        std::cout << "learning rate: " << alpha << "\n";
+        std::cout << "decay rate: " << gamma << "\n";
         std::cout << "*********************************************" << std::endl;
     }
 
@@ -46,16 +49,19 @@ public:
     void setAlpha (const double value) { alpha = value; }
     void setGamma (const double value) { gamma = value; }
     void setEpsilon (const double value) { epsilon = value; }
+    void setSGDTimes(const size_t value) { sgd_times = value; }
 
     double getAlpha() const { return alpha; }
     double getGamma() const { return gamma; }
     double getEpsilon() const { return epsilon; }
+    size_t getSGDTimes() const { return sgd_times; }
 
 private:
-    double min_gradient; // Gradient threshold to stop the iterations
-    double alpha;        // Learning rate
-    double gamma;        // Decay rate
-    double epsilon;      // Prevent division by 0
+    size_t sgd_times;    // Perform several times of steepest gradient descent to launch the AdaDelta method (default = 1000)
+    double min_gradient; // Gradient threshold to stop the iterations (default = 0.01)
+    double alpha;        // Learning rate (default = 0.01)
+    double gamma;        // Decay rate (default = 0.9)
+    double epsilon;      // Prevent division by 0 (default = 1e-8)
 };
 }
 

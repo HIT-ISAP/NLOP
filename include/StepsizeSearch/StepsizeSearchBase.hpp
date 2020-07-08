@@ -2,7 +2,7 @@
 #define STEPSIZESEARCHBASE_HPP
 
 #include "Utils/Functor.hpp"
-#include "Utils/Matrix.hpp"
+#include "StepsizeSearchParams/StepsizeSearchParamsBase.hpp"
 #include <iostream>
 
 namespace NLOP {
@@ -22,20 +22,17 @@ public:
     /// @brief Iteratively search the accurate optimal stepsize
     virtual T search(JacobianType& d) = 0;
 
-    /// @brief Set and get max iteration times
-    void setMaxIterations(size_t value) { max_iteration_times = value; }
-    size_t getMaxIterations() const { return max_iteration_times; }
+    /// @brief Initialize params
+    //void init(StepsizeSearchParamsBase* params) = 0;
 
-    /// @brief Set and get recent iteration times
-    void setIterationTimes(size_t value) { iteration_times = value; }
-    size_t getIterationTimes() const { return iteration_times; }
+    /// @brief Bind objective function
+    void bind(FunctorType* f) { this->f = f; }
 
-    virtual void init(FunctorType* f) = 0;
+    virtual void reset(StepsizeSearchParamsBase* params) = 0;
 
-    FunctorType* f; // Target function
-
-    size_t iteration_times = 0;
-    size_t max_iteration_times = 20;
+protected:
+    FunctorType* f;                   // objective function
+    //StepsizeSearchParamsBase* params; // params of stepsize searcher
 };
 }
 

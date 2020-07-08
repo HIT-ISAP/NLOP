@@ -34,66 +34,49 @@ public:
         this->params = params;
 
         s_last.setZero(1, InputType::RowsAtCompileTime);
-
     }
 
     /// @brief RMSProp optimization process
     InputType optimize() override
     {
-        if (params->getVerbosity() == RMSPropParams::SUMMARY
-                 || params->getVerbosity() == RMSPropParams::DETAIL)
-        {
-            params->print("RMSProp optimization");
-            this->printInitialConfigurations();
-        }
-        //this->writer.open("../data/"
-        //                  "RMSProp.txt");
+        this->printInitialConfigurations(params);
+        if (params->isLogFile())
+            this->writer.open("../data/RMSProp.txt");
         while (true) {
             this->updateValueAndJacobian();
-            //this->writeInformation();
+            this->printProcessInformation(params);
+            if (this->writer.is_open())
+                this->writeInformation();
             if (params->getIterationTimes()> params->getMaxIterations())
             {
                 std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
-                this->printResult();
                 return f->getX();
             }
+
             if (f->getJacobian().norm() < params->getMinGradient())
             {
-                if (params->getVerbosity() == RMSPropParams::SUMMARY
-                         || params->getVerbosity() == RMSPropParams::DETAIL)
-                {
-                    std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
-                    this->printResult();
-                }
+                this->printResult(params);
                 return f->getX();
             }
             else
             {
-                params->nextIteration();
-
-                if (params->getVerbosity() == RMSPropParams::DETAIL)
-                {
-                    std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
-                    this->printProcessInformation();
-                }
-
                 x = f->getX();
                 g = f->getJacobian();
 
-                //s = params->gamma * s_last + (1-params->gamma) * (g.dot(g));
-
                 for (int i = 0; i < InputType::RowsAtCompileTime; ++i)
                 {
-                    s[i] = params->getGamma() * s_last[i] + (1-params->getGamma()) * g[i] * g[i];
-                    //s[i] += g[i] * g[i];
+                    s[i] = params->getGamma() * s_last[i] + (1 - params->getGamma()) * g[i] * g[i];
                     x_next[i] = x[i] - params->getAlpha() / (params->getEpsilon() + sqrt(s[i])) * g[i];
                 }
 
                 f->setX(x_next);
                 s_last = s;
+
+                params->nextIteration();
             }
         }
-        //this->writer.close();
+        if (this->writer.is_open())
+            this->writer.close();
     }
 
 private:

@@ -20,17 +20,21 @@ protected:
 
     using AccurateBase::alpha;
     using AccurateBase::beta;
-    using AccurateBase::epsilon;
     using AccurateBase::lambda;
 
-    using AccurateBase::iteration_times;
-    using AccurateBase::max_iteration_times;
     using AccurateBase::f;
 
 public:
-    void printProcess() override
+    /// @brief Constructor
+    GoldSectionMethod() { params = new AccurateSearchParams; }
+    GoldSectionMethod(StepsizeSearchParamsBase* given_params) { params = given_params; }
+
+    ~GoldSectionMethod() { delete params; }
+
+    /// @brief print stepsize searching process information
+    void printProcess()
     {
-        std::cout << "interative times: " << iteration_times
+        std::cout << "iteration times: " << params->getIterationTimes()
                   << "  " << "[alpha, lambda, mu, beta]: "
                   << "[" << alpha << ", " << lambda << ", "
                   << mu << ", " << beta << "]" << std::endl;
@@ -38,33 +42,31 @@ public:
     /// @brief Use Golden Section Method to search the optimal stepsize
     T search(JacobianType& d) override
     {
-        //double t = 0.618; // reduction ratio
+        this->reset(params);
         lambda = alpha + (1 - t) * (beta - alpha);
         mu = alpha + t * (beta - alpha);
         while (true)
         {
             //this->printProcess();
-            // Stoping condition: (alpha - beta) < epsilon
-            if ((beta - alpha) < epsilon)
+            // stoping condition: (alpha - beta) < epsilon
+            if ((beta - alpha) < params->getStepsizeAccuracy())
             {
                 auto stepsize = (alpha + beta)/2;
-                //std::cout << "Finished! Optimal lambda: " << stepsize << std::endl;
-                this->reset(); // Reset alpha, beta for next searching
+                this->reset(params); // reset alpha, beta for next searching
                 return stepsize;
             }
-            iteration_times++;
-
-            // If f(x + lambda*d) > f(x + mu*d)
-            if ((*f)(f->getX()+lambda*d.transpose()) > (*f)(f->getX()+mu*d.transpose()))
+            params->nextIteration();
+            // if f(x + lambda * d) > f(x + mu * d)
+            if ((*f)(f->getX() + lambda * d.transpose()) > (*f)(f->getX() + mu * d.transpose()))
             {
-                // Cut the interval [alpha, lambda)
+                // cut the interval [alpha, lambda)
                 alpha = lambda;
                 lambda = mu;
                 mu = alpha + t * (beta - alpha);
             }
             else
             {
-                // Cut the interval (mu, beta]
+                // cut the interval (mu, beta]
                 beta = mu;
                 mu = lambda;
                 lambda = alpha + (1 - t) * (beta - alpha);
@@ -74,7 +76,9 @@ public:
 
 private:
     T mu;
-    T t = 0.618; // reduction ratio
+    T t = 0.618;                // reduction ratio
+
+    AccurateSearchParams* params;
 };
 
 }

@@ -23,6 +23,7 @@ protected:
 
 public:
     AdagradOptimizer() {}
+    ~AdagradOptimizer() {}
 
     /// @brief Initialize
     void init(const InputType& initial, FunctorType* f,
@@ -37,42 +38,26 @@ public:
     /// @brief Adagrad optimization process
     InputType optimize() override
     {
-        if (params->getVerbosity() == AdagradParams::SUMMARY
-                 || params->getVerbosity() == AdagradParams::DETAIL)
-        {
-            params->print("Adagrad optimization");
-            this->printInitialConfigurations();
-        }
-        //this->writer.open("../data/"
-        //                  "Adagrad.txt");
+        this->printInitialConfigurations(params);
+        if (params->isLogFile())
+            this->writer.open("../data/Adagrad.txt");
         while (true){
             this->updateValueAndJacobian();
-            //this->writeInformation();
+            this->printProcessInformation(params);
+            if (this->writer.is_open())
+                this->writeInformation();
             if (params->getIterationTimes() > params->getMaxIterations())
             {
                 std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
-                this->printResult();
                 return f->getX();
             }
             if (f->getJacobian().norm() < params->getMinGradient())
             {
-                if (params->getVerbosity() == AdagradParams::SUMMARY
-                         || params->getVerbosity() == AdagradParams::DETAIL)
-                {
-                    std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
-                    this->printResult();
-                }
+                this->printResult(params);
                 return f->getX();
             }
             else
             {
-                params->nextIteration();
-                if (params->getVerbosity() == AdagradParams::DETAIL)
-                {
-                    std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
-                    this->printProcessInformation();
-                }
-
                 x = f->getX();
                 g = f->getJacobian();
 
@@ -82,12 +67,14 @@ public:
                     x_next[i] = x[i] - params->getAlpha() / (params->getEpsilon() + sqrt(s[i])) * g[i];
                 }
 
+                // update x
                 f->setX(x_next);
+                params->nextIteration();
             }
         }
-        //this->writer.close();
+        if (this->writer.is_open())
+            this->writer.close();
     }
-
 
 private:
     AdagradParams* params;

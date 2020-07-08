@@ -48,46 +48,30 @@ public:
     /// @brief AdaDelta optimization process
     InputType optimize() override
     {
-        if (params->getVerbosity() == AdaDeltaParams::SUMMARY
-                 || params->getVerbosity() == AdaDeltaParams::DETAIL)
-        {
-            params->print("AdaDelta optimization");
-            this->printInitialConfigurations();
-        }
-        this->writer.open("../data/"
-                          "AdaDelta.txt");
+        this->printInitialConfigurations(params);
+        if (params->isLogFile())
+            this->writer.open("../data/AdaDelta.txt");
         while (true) {
             this->updateValueAndJacobian();
-            this->writeInformation();
+            this->printProcessInformation(params);
+            if (this->writer.is_open())
+                this->writeInformation();
             if (params->getIterationTimes() > params->getMaxIterations())
             {
                 std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
-                this->printResult();
                 return f->getX();
             }
             if (f->getJacobian().norm() < params->getMinGradient())
             {
-                if (params->getVerbosity() == AdaDeltaParams::SUMMARY
-                         || params->getVerbosity() == AdaDeltaParams::DETAIL)
-                {
-                    std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
-                    this->printResult();
-                }
+                this->printResult(params);
                 return f->getX();
             }
             else
             {
-                params->nextIteration();
-                if (params->getVerbosity() == AdaDeltaParams::DETAIL)
-                {
-                    std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
-                    this->printProcessInformation();
-                }
-
                 x = f->getX();
                 g = f->getJacobian();
 
-                if (params->getIterationTimes() < 1000)
+                if (params->getIterationTimes() < params->getSGDTimes())
                 {
                     d = -g;
                     stepsize = ss->search(d);
@@ -110,12 +94,16 @@ public:
                 }
                 x_next = x + dx;
 
+                // update x
                 f->setX(x_next);
                 s_last = s;
                 s_dx_last = s_dx;
+
+                params->nextIteration();
             }
         }
-        this->writer.close();
+        if (this->writer.is_open())
+            this->writer.close();
     }
 
 private:

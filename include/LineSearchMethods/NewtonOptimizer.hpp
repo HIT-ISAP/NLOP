@@ -39,17 +39,14 @@ public:
     /// @brief Newton optimization process
     InputType optimize() override
     {
-        if (params->getVerbosity() == NewtonParams::SUMMARY
-                 || params->getVerbosity() == NewtonParams::DETAIL)
-        {
-            params->print("Newton's method optimization");
-            this->printInitialConfigurations();
-        }
-        this->writer.open("../data/"
-                          "Newton.txt");
+        this->printInitialConfigurations(params);
+        if (params->isLogFile())
+            this->writer.open("../data/Newton.txt");
         while (true){
             this->updateValueAndJacobian();
-            this->writeInformation();
+            this->printProcessInformation(params);
+            if (this->writer.is_open())
+                this->writeInformation();
             if (params->getIterationTimes() > params->getMaxIterations())
             {
                 std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
@@ -57,13 +54,6 @@ public:
             }
             else
             {
-                params->nextIteration();
-                if (params->getVerbosity() == NewtonParams::DETAIL)
-                {
-                    std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
-                    this->printProcessInformation();
-                }
-
                 x = f->getX();
                 g = f->getJacobian();
 
@@ -71,18 +61,16 @@ public:
 
                 if (delta_x.norm() < params->getMinDeltaX())
                 {
-                    if (params->getVerbosity() == NewtonParams::SUMMARY
-                             || params->getVerbosity() == NewtonParams::DETAIL)
-                    {
-                        std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
-                        this->printResult();
-                    }
+                    this->printResult(params);
                     return f->getX();
                 }
+                // update x
                 f->setX(x - delta_x);
+                params->nextIteration();
             }
         }
-        this->writer.close();
+        if (this->writer.is_open())
+            this->writer.close();
     }
 
 private:

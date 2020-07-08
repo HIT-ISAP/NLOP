@@ -20,12 +20,14 @@ set(HEADERS
     include/Utils/Functor.hpp
     include/Utils/Constraint.hpp
 
-    # Optimizer Params Base
+    ######################################################
+
+    # Optimizer Params
     include/OptimizerParams/OptimizerParamsBase.hpp
     include/OptimizerParams/LineSearchParams.hpp
     include/OptimizerParams/TrustRegionParams.hpp
 
-    # Line search method params
+    ## Line search method params
     include/OptimizerParams/SteepestDescentParams.hpp
     include/OptimizerParams/ConjuateGradientParams.hpp
     include/OptimizerParams/MomentumParams.hpp
@@ -36,24 +38,20 @@ set(HEADERS
     include/OptimizerParams/AdamParams.hpp
     include/OptimizerParams/HookeJeevesParams.hpp
 
+    ## Newton's and Quasi-Newton method params
     include/OptimizerParams/NewtonParams.hpp
     include/OptimizerParams/LevenbergMarquardtParams.hpp
     include/OptimizerParams/DFP_Params.hpp
     include/OptimizerParams/BFGS_Params.hpp
 
-    # Constrained optimizer method params
-    include/OptimizerParams/ALM_Params.hpp
+    ######################################################
 
-    # Constrained optimizer methods
-    include/ConstrainedOptimizer/ConstrainedOptimizerBase.hpp
-    include/ConstrainedOptimizer/ALM_Optimizer.hpp
-
-    # Optimizer Base
+    # Optimizer
     include/OptimizerBase/OptimizerBase.hpp
     include/OptimizerBase/LineSearchOptimizer.hpp
     include/OptimizerBase/TrustRegionOptimizer.hpp
 
-    # Line Search Methods
+    ## Line Search Methods
     include/LineSearchMethods/SteepestDescentOptimizer.hpp
     include/LineSearchMethods/NewtonOptimizer.hpp
     include/LineSearchMethods/ConjuateGradientOptimizer.hpp
@@ -65,32 +63,47 @@ set(HEADERS
     include/LineSearchMethods/AdamOptimizer.hpp
     include/LineSearchMethods/HookeJeevesOptimizer.hpp
 
-    # Newton's method and Quasi-Newton method
+    ## Newton's method and Quasi-Newton method
     include/LineSearchMethods/NewtonOptimizer.hpp
     include/LineSearchMethods/DFP_Optimizer.hpp
     include/LineSearchMethods/BFGS_Optimizer.hpp
 
-    # Trust Region Methods
+    ## Trust Region Methods
     include/TrustRegionMethods/LevenbergMarquardtOptimizer.hpp
 
-    # One Dimensional Search Methods
+    ######################################################
+
+    # Stepsize Search Methods
+    include/StepsizeSearch/StepsizeSearchBase.hpp
     include/StepsizeSearch/Accurate/AccurateSearchBase.hpp
     include/StepsizeSearch/Inaccurate/InaccurateSearchBase.hpp
 
-    # Stepsize search base
-    include/StepsizeSearch/StepsizeSearchBase.hpp
-
-    # Accurate stepsize search
+    ## Accurate stepsize search
     include/StepsizeSearch/Accurate/GoldenSectionMethod.hpp
     include/StepsizeSearch/Accurate/FibonacciMethod.hpp
     include/StepsizeSearch/Accurate/BisectionMethod.hpp
     include/StepsizeSearch/Accurate/DichotomousMethod.hpp
 
-    # Inaccurate stepsize search
+    ## Inaccurate stepsize search
     include/StepsizeSearch/Inaccurate/InaccurateSearchBase.hpp
     include/StepsizeSearch/Inaccurate/GoldsteinMethod.hpp
     include/StepsizeSearch/Inaccurate/ArmijoMethod.hpp
     include/StepsizeSearch/Inaccurate/WolfePowellMethod.hpp
+
+    ## Stepsize search params
+    include/StepsizeSearchParams/StepsizeSearchParamsBase.hpp
+    include/StepsizeSearchParams/AccurateSearchParams.hpp
+    include/StepsizeSearchParams/InaccurateSearchParams.hpp
+
+    include/StepsizeSearchParams/GoldenSectionParams.hpp
+    include/StepsizeSearchParams/FibonacciParams.hpp
+    include/StepsizeSearchParams/DichotomousParams.hpp
+
+    include/StepsizeSearchParams/ArmijoParams.hpp
+    include/StepsizeSearchParams/GoldsteinParams.hpp
+    include/StepsizeSearchParams/WolfePowellParams.hpp
+
+    ######################################################
     )
 
 # Examples
