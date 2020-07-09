@@ -26,16 +26,26 @@ protected:
 public:
     /// @brief Constructors
     DichotomousMethod() { params = new AccurateSearchParams; }
-    DichotomousMethod(AccurateSearchParams* given_params) { params = given_params; }
+    //DichotomousMethod(AccurateSearchParams* given_params) { params = given_params; }
 
     ~DichotomousMethod() { delete params; }
 
+    /// @brief Print stepsize searching process information
     void printProcess()
     {
         std::cout << "interative times: " << params->getIterationTimes()
                   << "  " << "[alpha, lambda, mu, beta]: "
                   << "[" << alpha << ", " << lambda << ", "
                   << mu << ", " << beta << "]" << std::endl;
+    }
+
+    /// @brief Set params
+    void setParams(StepsizeSearchParamsBase* given_params) override
+    {
+        params->setUpperBound(given_params->getUpperBound());
+        params->setLowerBound(given_params->getLowerBound());
+        params->setStepsizeAccuracy(given_params->getStepsizeAccuracy());
+        params->setMaxIterations(given_params->getMaxIterations());
     }
 
     T search(JacobianType& d) override

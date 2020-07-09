@@ -28,6 +28,8 @@ public:
     /// @brief Bind objective function
     void bind(FunctorType* f) { this->f = f; }
 
+    virtual void setParams(StepsizeSearchParamsBase* given_params) {}
+
     virtual void reset(StepsizeSearchParamsBase* params) = 0;
 
 protected:

@@ -38,16 +38,16 @@ public:
 
     /// @brief Getters and Setters for params specialized for accurate searching method
     virtual void setStepsizeAccuracy(const double value) {}
-    virtual double getStepsizeAccuracy() {}
+    virtual double getStepsizeAccuracy() const {}
 
     /// @brief Getters and Setters for params specialized for inaccurate searching method
     virtual void setIncreaseFactor(const double value) {}
     virtual void setDecreaseFactor(const double value) {}
     virtual void setInitLambdaFactor(const double value) {}
 
-    virtual double getIncreaseFactor() {}
-    virtual double getDecreaseFactor() {}
-    virtual double getInitLambdaFactor() {}
+    virtual double getIncreaseFactor() const {}
+    virtual double getDecreaseFactor() const {}
+    virtual double getInitLambdaFactor() const {}
 
 protected:
     size_t iteration_times;       // recent iteration times

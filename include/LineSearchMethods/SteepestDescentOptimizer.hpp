@@ -40,7 +40,7 @@ public:
         this->params = params;
         this->initStepsizeMethod(params);
         this->ss->bind(this->f);
-        //this->ss->init(params->stepsize_params);
+        this->ss->setParams(params->stepsize_params);
     }
 
     /// @brief Steepest Descent optimization process

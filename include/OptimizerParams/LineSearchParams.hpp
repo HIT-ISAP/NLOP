@@ -3,7 +3,9 @@
 
 #include <OptimizerParams/OptimizerParamsBase.hpp>
 #include <StepsizeSearch/Accurate/AccurateSearchBase.hpp>
-
+#include <StepsizeSearchParams/ArmijoParams.hpp>
+#include <StepsizeSearchParams/GoldsteinParams.hpp>
+#include <StepsizeSearchParams/WolfePowellParams.hpp>
 
 namespace NLOP {
 /// @class NLOP::LineSearchParams
@@ -68,11 +70,37 @@ public:
         if (s == "WOLFEPOWELL")
             return WOLFEPOWELL;
 
-        return WOLFEPOWELL; // If invalid value is received, choose GOLDENSECTION mode
+        return WOLFEPOWELL; // if invalid value is received, choose GOLDENSECTION mode
     }
 
     /// @brief Getters and setters for common params
-    void setStepsizeMethod(std::string value) { stepsize_method = StepsizeMethodTranslator(value); }
+    void setStepsizeMethod(std::string value)
+    {
+        stepsize_method = StepsizeMethodTranslator(value);
+        delete stepsize_params;
+        switch (stepsize_method) {
+        case GOLDENSECTION:
+            stepsize_params = new AccurateSearchParams;
+            break;
+        case DICHOTOMOUS:
+            stepsize_params = new AccurateSearchParams;
+            break;
+        case FIBONACCI:
+            stepsize_params = new AccurateSearchParams;
+            break;
+        case ARMIJO:
+            stepsize_params = new ArmijoParams;
+            break;
+        case GOLDSTEIN:
+            stepsize_params = new GoldsteinParams;
+            break;
+        case WOLFEPOWELL:
+            stepsize_params = new WolfePowellParams;
+            break;
+        default:
+            break;
+        }
+    }
     void setStepsizeUpperBound(const double value) { stepsize_params->setUpperBound(value); }
     void setStepsizeLowerBound(const double value) { stepsize_params->setLowerBound(value); }
     void setStepsizeMaxIterations(const size_t value) { stepsize_params->setMaxIterations(value); }
@@ -133,8 +161,7 @@ public:
 protected:
     StepsizeMethod stepsize_method;             // stepsize searching method (default WOLFEPOWELL)
 
-
-    virtual ~LineSearchParams() {}
+    virtual ~LineSearchParams() { delete stepsize_params; }
 };
 }
 

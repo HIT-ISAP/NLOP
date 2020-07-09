@@ -39,7 +39,8 @@ public:
         this->updateValue();
         this->params = params;
         this->initStepsizeMethod(params);
-        //this->ss->init(this->f);
+        this->ss->bind(this->f);
+        this->ss->setParams(params->stepsize_params);
 
         delta_x.setZero(InputType::RowsAtCompileTime, 1);
         delta_g.setZero(1, InputType::RowsAtCompileTime);

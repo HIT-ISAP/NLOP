@@ -57,18 +57,25 @@ int main()
     RosenbrockFunctor* f = new RosenbrockFunctor;
     Eigen::Vector2d initial_x(0, 0);
 
-    SteepestDescentOptimizer<RosenbrockFunctor> optimizer;
-    SteepestDescentParams* params= new SteepestDescentParams;
-    params->setVerbosity("DETAIL");
+    //SteepestDescentOptimizer<RosenbrockFunctor> optimizer;
+    //SteepestDescentParams* params= new SteepestDescentParams;
+    //params->setVerbosity("DETAIL");
     //params->setMaxItertaions(1000);
     //params->setMinGradient(0.1);
-    params->setStepsizeMethod("WOLFEPOWELL");
-    params->enableLog();
-    optimizer.init(initial_x, f, params);
+    //params->setStepsizeMethod("GOLDSTEIN");
+    //params->setStepsizeAccuracy(0.001);
+    //params->setStepsizeIncreaseFactor(3);
+    //params->setStepsizeDecreaseFactor(0.3);
+    //params->setStepsizeUpperBound(0.01);
+    //params->setStepsizeLowerBound(0);
+    //params->enableLog();
+    //optimizer.init(initial_x, f, params);
 
     //ConjuateGradientOptimizer<RosenbrockFunctor> optimizer;
     //ConjuateGradientParams* params = new ConjuateGradientParams;
-    //params->setStepsizeMethod("WOLFEPOWELL");
+    //params->setStepsizeMethod("GOLDSTEIN");
+    //params->setStepsizeUpperBound(1);
+    //params->setStepsizeAccuracy(0.0005);
     //params->setVerbosity("DETAIL");
     //params->enableLog();
     //optimizer.init(initial_x, f, params);
@@ -129,15 +136,19 @@ int main()
 
     //DFP_Optimizer<RosenbrockFunctor> optimizer;
     //DFP_Params* params = new DFP_Params;
+    //params->setStepsizeAccuracy(0.002);
+    //params->setStepsizeIncreaseFactor(2);
+    //params->setStepsizeDecreaseFactor(0.3);
     //params->enableLog();
     //params->setVerbosity("DETAIL");
     //optimizer.init(initial_x, f, params);
 
-    //BFGS_Optimizer<RosenbrockFunctor> optimizer;
-    //BFGS_Params* params = new BFGS_Params;
-    //params->enableLog();
-    //params->setVerbosity("DETAIL");
-    //optimizer.init(initial_x, f, params);
+    BFGS_Optimizer<RosenbrockFunctor> optimizer;
+    BFGS_Params* params = new BFGS_Params;
+    params->enableLog();
+    params->setVerbosity("DETAIL");
+    params->setStepsizeMethod("GOLDENSECTION");
+    optimizer.init(initial_x, f, params);
 
     optimizer.optimize();
 

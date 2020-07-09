@@ -22,9 +22,19 @@ protected:
 public:
     /// @brief Constructor
     ArmijoMethod() { params = new ArmijoParams; }
-    ArmijoMethod (ArmijoParams* given_params) { params = given_params; }
+    //ArmijoMethod (ArmijoParams* given_params) { params = given_params; }
 
     ~ArmijoMethod() { delete params; }
+
+    /// @brief Set params
+    void setParams(StepsizeSearchParamsBase* given_params) override
+    {
+        params->setUpperBound(given_params->getUpperBound());
+        params->setLowerBound(given_params->getLowerBound());
+        params->setMaxIterations(given_params->getMaxIterations());
+        params->setIncreaseFactor(given_params->getIncreaseFactor());
+        params->setDecreaseFactor(given_params->getDecreaseFactor());
+    }
 
     /// @brief Search inaccurate stepsize iteratively using Goldstein method
     /// @param d Direction for stepsize searching

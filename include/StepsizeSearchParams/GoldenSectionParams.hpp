@@ -10,6 +10,7 @@ class GoldenSectionParams: public AccurateSearchParams
 {
 public:
     /// @brief Constructor
+    GoldenSectionParams() { setDefaults(); }
 
     /// @brief Use default stepsize searcher params
     void setDefaults() override
@@ -17,7 +18,7 @@ public:
         setLowerBound(0);
         setUpperBound(1);
         setMaxIterations(20);
-        setEpsilon(0.001);
+        epsilon = 0.001;
     }
 };
 }

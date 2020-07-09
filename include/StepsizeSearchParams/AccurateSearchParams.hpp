@@ -18,15 +18,15 @@ public:
         setLowerBound(0);
         setUpperBound(1);
         setMaxIterations(20);
-        epsilon = 0.001;
+        setStepsizeAccuracy(0.001);
     }
 
     /// @brief Getters and Setters for params
-    void setStepsizeAccuracy(const double value) { epsilon = value; }
-    double getStepsizeAccuracy() const { return epsilon; }
+    void setStepsizeAccuracy(const double value) override { epsilon = value; }
+    double getStepsizeAccuracy() const override { return epsilon; }
 
 protected:
-    double epsilon;     // stepsize accuracy
+    double epsilon = 0.001;     // stepsize accuracy
 };
 }
 

@@ -20,6 +20,7 @@ public:
         verbosity = SUMMARY;
         log_file = false;
         stepsize_method = WOLFEPOWELL;
+        stepsize_params = new WolfePowellParams;
         min_gradient = 0.01;
     }
 

@@ -22,8 +22,6 @@ public:
 
     void reset(StepsizeSearchParamsBase* params) override { params->setIterationTimes(0); }
 
-    //void init(StepsizeSearchParamsBase *params) override { params->setIterationTimes(0); }
-
 protected:
     T lambda;       // stepsize
 };

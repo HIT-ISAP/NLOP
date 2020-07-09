@@ -27,9 +27,19 @@ protected:
 public:
     /// @brief Constructors
     FibonacciMethod() { params = new AccurateSearchParams; }
-    FibonacciMethod(AccurateSearchParams* given_params) { params = given_params; }
+    //FibonacciMethod(StepsizeSearchParamsBase* given_params) { params = given_params; }
     ~FibonacciMethod() { delete params; }
 
+    /// @brief Set params
+    void setParams(StepsizeSearchParamsBase* given_params) override
+    {
+        params->setUpperBound(given_params->getUpperBound());
+        params->setLowerBound(given_params->getLowerBound());
+        params->setStepsizeAccuracy(given_params->getStepsizeAccuracy());
+        params->setMaxIterations(given_params->getMaxIterations());
+    }
+
+    /// @brief Print stepsize searching process information
     void printProcess()
     {
         std::cout << "interative times: " << params->getIterationTimes()
@@ -38,6 +48,7 @@ public:
                   << mu << ", " << beta << "]" << std::endl;
     }
 
+    /// @brief search stepsize using
     T search(JacobianType& d) override
     {
         this->reset(params);

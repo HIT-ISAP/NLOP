@@ -27,11 +27,20 @@ protected:
 public:
     /// @brief Constructor
     GoldSectionMethod() { params = new AccurateSearchParams; }
-    GoldSectionMethod(StepsizeSearchParamsBase* given_params) { params = given_params; }
+    //GoldSectionMethod(StepsizeSearchParamsBase given_params) { *params = given_params; }
 
     ~GoldSectionMethod() { delete params; }
 
-    /// @brief print stepsize searching process information
+    /// @brief Set params
+    void setParams(StepsizeSearchParamsBase* given_params) override
+    {
+        params->setUpperBound(given_params->getUpperBound());
+        params->setLowerBound(given_params->getLowerBound());
+        params->setStepsizeAccuracy(given_params->getStepsizeAccuracy());
+        params->setMaxIterations(given_params->getMaxIterations());
+    }
+
+    /// @brief Print stepsize searching process information
     void printProcess()
     {
         std::cout << "iteration times: " << params->getIterationTimes()
@@ -52,7 +61,7 @@ public:
             if ((beta - alpha) < params->getStepsizeAccuracy())
             {
                 auto stepsize = (alpha + beta)/2;
-                this->reset(params); // reset alpha, beta for next searching
+                //this->reset(params); // reset alpha, beta for next searching
                 return stepsize;
             }
             params->nextIteration();

@@ -21,9 +21,19 @@ protected:
 
 public:
     WolfePowellMethod() { params = new WolfePowellParams; }
-    WolfePowellMethod(WolfePowellParams* given_params) { params = given_params; }
+    //WolfePowellMethod(WolfePowellParams* given_params) { params = given_params; }
 
     ~WolfePowellMethod() { delete params; }
+
+    /// @brief Set params
+    void setParams(StepsizeSearchParamsBase* given_params) override
+    {
+        params->setUpperBound(given_params->getUpperBound());
+        params->setLowerBound(given_params->getLowerBound());
+        params->setMaxIterations(given_params->getMaxIterations());
+        params->setIncreaseFactor(given_params->getIncreaseFactor());
+        params->setDecreaseFactor(given_params->getDecreaseFactor());
+    }
 
     /// @brief Compute y and jacobian with given x
     void computeValueAndJacobian(const InputType& x, ValueType* v, JacobianType* jac)

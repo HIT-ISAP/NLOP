@@ -70,7 +70,7 @@ public:
     Verbosity getVerbosity() { return verbosity; }
 
     /// @brief Get and set recent iteration times
-    void setIterationTimes(size_t value) { iteration_times = value; }
+    //void setIterationTimes(size_t value) { iteration_times = value; }
     size_t getIterationTimes() const { return iteration_times; }
 
     /// @brief Enable and disable logging file

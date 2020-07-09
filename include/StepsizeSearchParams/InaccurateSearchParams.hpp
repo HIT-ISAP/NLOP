@@ -25,9 +25,9 @@ public:
     void setDecreaseFactor(const double value) override { beta = value; }
     void setInitLambdaFactor(const double value) override { init_lambda_factor = value; }
 
-    double getIncreaseFactor() const { return alpha; }
-    double getDecreaseFactor() const { return beta; }
-    double getInitLambdaFactor() const { return init_lambda_factor; }
+    double getIncreaseFactor() const override { return alpha; }
+    double getDecreaseFactor() const override { return beta; }
+    double getInitLambdaFactor() const override { return init_lambda_factor; }
 
 protected:
     double alpha;               // increase factor

@@ -17,6 +17,7 @@ public:
     {
         alpha = 1.5;
         beta = 0.5;
+        init_lambda_factor = 0.1;
         rho = 0.1;
     }
 

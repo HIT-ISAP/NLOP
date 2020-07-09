@@ -21,16 +21,6 @@ protected:
     using Base::f;
 
 public:
-    /*
-    /// @brief Initial with default params
-    void init(StepsizeSearchParamsBase* params) override
-    {
-        alpha = params->getLowerBound();
-        beta = params->getUpperBound();
-        params->setIterationTimes(0);
-    }
-    */
-
     /// @brief Reset observation variables and iteration times for the next stepsize searching
     void reset(StepsizeSearchParamsBase* params) override
     {
