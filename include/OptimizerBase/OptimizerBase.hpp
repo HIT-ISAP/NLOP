@@ -43,10 +43,10 @@ public:
                  || params->getVerbosity() == OptimizerParamsBase::DETAIL)
         {
             std::cout << "Optimization Finished!" << "\n";
-            std::cout << "Iteration times: " << params->getIterationTimes() << "\n";
-            std::cout << "Optimal x: (" << f->getX().transpose() << ")" << "\n";
+            std::cout << "iteration times: " << params->getIterationTimes() << "\n";
+            std::cout << "optimal x: (" << f->getX().transpose() << ")" << "\n";
             std::cout << "f(x) = " << f->getY() << "\n";
-            std::cout << "Gradient: (" << f->getJacobian() << ")" << std::endl;
+            std::cout << "gradient: (" << f->getJacobian() << ")" << std::endl;
         }
     }
 
@@ -55,10 +55,10 @@ public:
     {
         if (params->getVerbosity() == OptimizerParamsBase::DETAIL)
         {
-            std::cout << "Iteration times: " << params->getIterationTimes() << std::endl;
+            std::cout << "iteration times: " << params->getIterationTimes() << std::endl;
             std::cout << "x: (" << f->getX().transpose() << ")" << "\n";
             std::cout << "f(x) = " << f->getY() << "\n";
-            std::cout << "Gradient: (" << f->getJacobian() << ")" << "\n";
+            std::cout << "gradient: (" << f->getJacobian() << ")" << "\n";
             std::cout << "*********************************************" << std::endl;
         }
     }
@@ -70,7 +70,7 @@ public:
                  || params->getVerbosity() == OptimizerParamsBase::DETAIL)
         {
             params->print();
-            std::cout << "Initial Configurations: " << "\n"
+            std::cout << "initial Configurations: " << "\n"
                       << "x0: (" << f->getX().transpose() << ") \n"
                       << "f(x0) = " << f->getY() << "\n"
                       << "*********************************************" << std::endl;

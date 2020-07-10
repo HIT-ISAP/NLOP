@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 
 project(ConvexOptimization)
 
-set(CMAKE_BUILD_TYPE "Debug")
+set(CMAKE_BUILD_TYPE "Release")
 set(CMAKE_CXX_FLAGS "-std=c++11 -O0")
 
 find_package(Eigen3 REQUIRED)
@@ -18,10 +18,8 @@ set(HEADERS
     include/Utils/Types.hpp
     include/Utils/Utils.hpp
     include/Utils/Functor.hpp
-    include/Utils/Constraint.hpp
 
     ######################################################
-
     # Optimizer Params
     include/OptimizerParams/OptimizerParamsBase.hpp
     include/OptimizerParams/LineSearchParams.hpp
@@ -45,7 +43,6 @@ set(HEADERS
     include/OptimizerParams/BFGS_Params.hpp
 
     ######################################################
-
     # Optimizer
     include/OptimizerBase/OptimizerBase.hpp
     include/OptimizerBase/LineSearchOptimizer.hpp
@@ -81,7 +78,6 @@ set(HEADERS
     ## Accurate stepsize search
     include/StepsizeSearch/Accurate/GoldenSectionMethod.hpp
     include/StepsizeSearch/Accurate/FibonacciMethod.hpp
-    include/StepsizeSearch/Accurate/BisectionMethod.hpp
     include/StepsizeSearch/Accurate/DichotomousMethod.hpp
 
     ## Inaccurate stepsize search
@@ -106,10 +102,21 @@ set(HEADERS
     ######################################################
     )
 
-# Examples
-#if(CXX_BUILD_EXAMPLES)
-#  add_executable(example_robot1 "examples/Robot1/main.cpp")
-#endif()
+# Generate cmake configuration scripts
+#set(NLOP_GENERATED_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated")
+#set(NLOP_VERSION_CONFIG "${NLOP_GENERATED_DIR}/${PROJECT_NAME}ConfigVersion.cmake")
+#set(NLOP_PROJECT_CONFIG "${NLOP_GENERATED_DIR}/${PROJECT_NAME}Config.cmake")
+#set(NLOP_CONFIG_INSTALL_DIR "lib/cmake/${PROJECT_NAME}")
+#set(NLOP_VERSION 1.0.0)
 
-add_executable(${PROJECT_NAME}
-    "src/main.cpp")
+#configure_file("${NLOP_SOURCE_DIR}/cmake_modules/Config.cmake.in" "${NLOP_PROJECT_CONFIG}" @ONLY)
+
+#install(
+#    FILES "${NLOP_PROJECT_CONFIG}"
+#    DESTINATION "${NLOP_CONFIG_INSTALL_DIR}")
+
+#set(INCLUDES_DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
+#set(INCLUDES_INSTALL_DIR ${INCLUDES_DESTINATION}/NLOP)
+#install(FILES ${HEADERS} DESTINATION ${INCLUDES_INSTALL_DIR})
+
+add_subdirectory(examples)
