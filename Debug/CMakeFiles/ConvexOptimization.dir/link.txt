@@ -1,1 +1,0 @@
-/usr/bin/g++  -std=c++11 -O0 -g  -rdynamic CMakeFiles/ConvexOptimization.dir/src/main.cpp.o  -o ConvexOptimization 
