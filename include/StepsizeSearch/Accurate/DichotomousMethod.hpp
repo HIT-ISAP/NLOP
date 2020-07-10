@@ -20,14 +20,11 @@ protected:
     using AccurateBase::alpha;
     using AccurateBase::beta;
     using AccurateBase::lambda;
-
     using AccurateBase::f;
 
 public:
-    /// @brief Constructors
+    /// @brief Constructor and Deconstructor
     DichotomousMethod() { params = new AccurateSearchParams; }
-    //DichotomousMethod(AccurateSearchParams* given_params) { params = given_params; }
-
     ~DichotomousMethod() { delete params; }
 
     /// @brief Print stepsize searching process information
@@ -48,13 +45,16 @@ public:
         params->setMaxIterations(given_params->getMaxIterations());
     }
 
+    /// @brief Search stepsize using dichotomous method
     T search(JacobianType& d) override
     {
-        this->reset(params);
+        // get params
         auto epsilon = params->getStepsizeAccuracy();
+
+        // initialization
+        this->reset(params);
         lambda = (alpha + beta)/2 - epsilon;
         mu = (alpha + beta)/2 + epsilon;
-
         params->setMaxIterations(int(std::log2((beta - alpha)/epsilon)));
 
         while (true)
@@ -62,11 +62,7 @@ public:
             //this->printProcess();
             // stoping condition: (alpha - beta) < 2*epsilon or reach max iteration times
             if (params->getIterationTimes() == params->getMaxIterations())
-            {
-                auto result = lambda;
-                this->reset(params);
-                return result;
-            }
+                return lambda;
             params->nextIteration();
             // if f(x + lambda * d) < f(x + mu * d)
             if ((*f)(f->getX() + lambda * d.transpose()) < (*f)(f->getX() + mu * d.transpose()))
@@ -87,8 +83,8 @@ public:
     }
 
 protected:
-    T mu;       // observation variable
-    AccurateSearchParams* params;
+    T mu;                           // observation variable
+    AccurateSearchParams* params;   // stepsize searching params
 };
 
 }

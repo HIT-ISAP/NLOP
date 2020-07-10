@@ -30,7 +30,7 @@ public:
         log_file = false;
     }
 
-    /// @brief print params of optimizer
+    /// @brief Print params of optimizer
     void print() override
     {
         std::cout << "RMSProp Optimization" << "\n";
@@ -38,8 +38,8 @@ public:
         std::cout << "maximum iterations: " << max_iteration_times << "\n";
         std::cout << "verbosity: " << verbosityTranslator(verbosity) << "\n";
         std::cout << "gradient thresthold: " << min_gradient << "\n";
-        std::cout << "Learning rate: " << alpha << "\n";
-        std::cout << "Decay rate: " << gamma << "\n";
+        std::cout << "learning rate: " << alpha << "\n";
+        std::cout << "decay rate: " << gamma << "\n";
         std::cout << "*********************************************" << std::endl;
     }
 
@@ -53,10 +53,10 @@ public:
     double getEpsilon() const { return epsilon; }
 
 private:
-    double min_gradient; // Gradient threshold to stop the iterations
-    double alpha;        // Learning rate
-    double gamma;        // Decay rate
-    double epsilon;      // Prevent division by 0
+    double min_gradient; // gradient threshold to stop the iterations
+    double alpha;        // learning rate
+    double gamma;        // decay rate
+    double epsilon;      // prevent division by 0
 };
 }
 

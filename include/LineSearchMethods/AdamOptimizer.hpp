@@ -41,6 +41,14 @@ public:
     /// @brief Adam optimization process
     InputType optimize() override
     {
+        // get params
+        auto max_iterations = params->getMaxIterations();
+        auto min_gradient = params->getMinGradient();
+        auto alpha = params->getAlpha();
+        auto gamma_v = params->getGammaV();
+        auto gamma_s = params->getGammaS();
+        auto epsilon = params->getEpsilon();
+
         this->printInitialConfigurations(params);
         if (params->isLogFile())
             this->writer.open("../data/Adam.txt");
@@ -49,14 +57,18 @@ public:
             this->printProcessInformation(params);
             if (this->writer.is_open())
                 this->writeInformation();
-            if (params->getIterationTimes() > params->getMaxIterations())
+            if (params->getIterationTimes() > max_iterations)
             {
                 std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
+                if (this->writer.is_open())
+                    this->writer.close();
                 return f->getX();
             }
-            if (f->getJacobian().norm() < params->getMinGradient())
+            if (f->getJacobian().norm() < min_gradient)
             {
                 this->printResult(params);
+                if (this->writer.is_open())
+                    this->writer.close();
                 return f->getX();
             }
             else
@@ -64,32 +76,25 @@ public:
                 x = f->getX();
                 g = f->getJacobian();
 
-                v = params->getGammaV() * v_last + (1 - params->getGammaV()) * g;
+                v = gamma_v * v_last + (1 - gamma_v) * g;
 
                 for (int i = 0; i < InputType::RowsAtCompileTime; ++i)
-                {
-                    s[i] = params->getGammaS() * s_last[i] + (1 - params->getGammaS()) * g[i] * g[i];
-                }
+                    s[i] = gamma_s * s_last[i] + (1 - gamma_s) * g[i] * g[i];
 
-                v_vee = v / (1 - pow(params->getGammaV(), params->getIterationTimes()+1));
-                s_vee = s / (1 - pow(params->getGammaS(), params->getIterationTimes()+1));
+                v_vee = v / (1 - pow(gamma_v, params->getIterationTimes()+1));
+                s_vee = s / (1 - pow(gamma_s, params->getIterationTimes()+1));
 
                 for (int i = 0; i < InputType::RowsAtCompileTime; ++i)
-                {
-                    x_next[i] = x[i] - params->getAlpha() * v_vee[i] / (params->getEpsilon() + sqrt(s_vee[i]));
-                }
+                    x_next[i] = x[i] - alpha * v_vee[i] / (epsilon + sqrt(s_vee[i]));
 
                 // update x
                 f->setX(x_next);
 
                 s_last = s;
                 v_last = v;
-
                 params->nextIteration();
             }
         }
-        if (this->writer.is_open())
-            this->writer.close();
     }
 
 private:

@@ -24,6 +24,8 @@ public:
         gamma = 0.9;
         epsilon = 1e-8;
         sgd_times = 1000;
+        stepsize_method = WOLFEPOWELL;
+        stepsize_params = new WolfePowellParams;
 
         max_iteration_times = 10000;
         iteration_times = 0;

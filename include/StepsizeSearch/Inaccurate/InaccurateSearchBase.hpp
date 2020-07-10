@@ -20,6 +20,7 @@ public:
 
     using Base::f;
 
+    /// @brief reset iteration_times = 0
     void reset(StepsizeSearchParamsBase* params) override { params->setIterationTimes(0); }
 
 protected:

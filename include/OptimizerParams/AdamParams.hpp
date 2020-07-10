@@ -57,11 +57,11 @@ public:
     double getEpsilon() const { return epsilon; }
 
 private:
-    double min_gradient = 0.01; // Gradient threshold to stop the iterations
-    double alpha = 0.01;        // Learning rate
-    double gamma_v = 0.9;       // Decay rate v
-    double gamma_s = 0.999;     // Decay rate s
-    double epsilon = 1e-8;      // Prevent division by 0
+    double min_gradient; // gradient threshold to stop the iterations
+    double alpha;        // learning rate
+    double gamma_v;      // decay rate v
+    double gamma_s;      // decay rate s
+    double epsilon;      // prevent division by 0
 };
 }
 

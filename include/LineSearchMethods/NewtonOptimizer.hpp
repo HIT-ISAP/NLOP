@@ -23,8 +23,9 @@ protected:
     using LineSearch::f;
 
 public:
-    /// @brief Constructors
+    /// @brief Constructor and Deconstructor
     NewtonOptimizer() {}
+    ~NewtonOptimizer() {}
 
     /// @brief Initialization
     void init(const InputType& initial, FunctorType* f,
@@ -39,6 +40,10 @@ public:
     /// @brief Newton optimization process
     InputType optimize() override
     {
+        // get params
+        auto max_iterations = params->getMaxIterations();
+        auto min_delta_x = params->getMinDeltaX();
+
         this->printInitialConfigurations(params);
         if (params->isLogFile())
             this->writer.open("../data/Newton.txt");
@@ -47,7 +52,7 @@ public:
             this->printProcessInformation(params);
             if (this->writer.is_open())
                 this->writeInformation();
-            if (params->getIterationTimes() > params->getMaxIterations())
+            if (params->getIterationTimes() > max_iterations)
             {
                 std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
                 return f->getX();
@@ -59,7 +64,7 @@ public:
 
                 delta_x = H(x).inverse() * g.transpose();
 
-                if (delta_x.norm() < params->getMinDeltaX())
+                if (delta_x.norm() < min_delta_x)
                 {
                     this->printResult(params);
                     return f->getX();
@@ -77,7 +82,7 @@ private:
     NewtonParams* params;
 
     HessianFunctorType H; // Hessian matrix
-    InputType delta_x;    // Delta x for every step
+    InputType delta_x;    // delta x for every step
     InputType x;
     JacobianType g;       // Jacobian
 };

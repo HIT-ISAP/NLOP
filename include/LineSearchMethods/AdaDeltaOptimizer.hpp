@@ -27,6 +27,7 @@ protected:
 
 public:
     AdaDeltaOptimizer() {}
+    ~AdaDeltaOptimizer() { delete ss; }
 
     /// @brief Initialize
     void init(const InputType& initial, FunctorType* f,
@@ -36,8 +37,9 @@ public:
         this->f->setX(initial);
         this->updateValue();
         this->params = params;
-        ss = new GoldSectionMethod<FunctorType>;
-        ss->init(this->f);
+        this->initStepsizeMethod(params);
+        this->ss->bind(this->f);
+        this->ss->setParams(params->stepsize_params);
 
         s.setZero(1, InputType::RowsAtCompileTime);
         s_last.setZero(1, InputType::RowsAtCompileTime);
@@ -48,6 +50,13 @@ public:
     /// @brief AdaDelta optimization process
     InputType optimize() override
     {
+        // get params
+        auto max_iterations = params->getMaxIterations();
+        auto min_gradient = params->getMinGradient();
+        auto sgd_times = params->getSGDTimes();
+        auto gamma = params->getGamma();
+        auto epsilon = params->getEpsilon();
+
         this->printInitialConfigurations(params);
         if (params->isLogFile())
             this->writer.open("../data/AdaDelta.txt");
@@ -56,14 +65,18 @@ public:
             this->printProcessInformation(params);
             if (this->writer.is_open())
                 this->writeInformation();
-            if (params->getIterationTimes() > params->getMaxIterations())
+            if (params->getIterationTimes() > max_iterations)
             {
                 std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
+                if (this->writer.is_open())
+                    this->writer.close();
                 return f->getX();
             }
-            if (f->getJacobian().norm() < params->getMinGradient())
+            if (f->getJacobian().norm() < min_gradient)
             {
                 this->printResult(params);
+                if (this->writer.is_open())
+                    this->writer.close();
                 return f->getX();
             }
             else
@@ -71,7 +84,7 @@ public:
                 x = f->getX();
                 g = f->getJacobian();
 
-                if (params->getIterationTimes() < params->getSGDTimes())
+                if (params->getIterationTimes() < sgd_times)
                 {
                     d = -g;
                     stepsize = ss->search(d);
@@ -79,21 +92,20 @@ public:
 
                     for (int i = 0; i < InputType::RowsAtCompileTime; ++i)
                     {
-                        s[i] = params->getGamma() * s_last[i] + (1 - params->getGamma()) * g[i] * g[i];
-                        s_dx[i] = params->getGamma() * s_dx_last[i] + (1 - params->getGamma()) * dx[i] *dx[i];
+                        s[i] = gamma * s_last[i] + (1 - gamma) * g[i] * g[i];
+                        s_dx[i] = gamma * s_dx_last[i] + (1 - gamma) * dx[i] *dx[i];
                     }
                 }
                 else
                 {
                     for (int i = 0; i < InputType::RowsAtCompileTime; ++i)
                     {
-                        s[i] = params->getGamma() * s_last[i] + (1 - params->getGamma()) * g[i] * g[i];
-                        dx[i] = -sqrt(s_dx_last[i]) / (sqrt(s[i]) + params->getEpsilon()) * g[i];
-                        s_dx[i] = params->getGamma() * s_dx_last[i] + (1 - params->getGamma()) * dx[i] *dx[i];
+                        s[i] = gamma * s_last[i] + (1 - gamma) * g[i] * g[i];
+                        dx[i] = -sqrt(s_dx_last[i]) / (sqrt(s[i]) + epsilon) * g[i];
+                        s_dx[i] = gamma * s_dx_last[i] + (1 - gamma) * dx[i] *dx[i];
                     }
                 }
                 x_next = x + dx;
-
                 // update x
                 f->setX(x_next);
                 s_last = s;
@@ -102,8 +114,6 @@ public:
                 params->nextIteration();
             }
         }
-        if (this->writer.is_open())
-            this->writer.close();
     }
 
 private:

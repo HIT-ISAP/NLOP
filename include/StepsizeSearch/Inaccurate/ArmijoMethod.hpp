@@ -20,10 +20,8 @@ protected:
     using InaccurateBase::f;
 
 public:
-    /// @brief Constructor
+    /// @brief Constructor and Deconstructor
     ArmijoMethod() { params = new ArmijoParams; }
-    //ArmijoMethod (ArmijoParams* given_params) { params = given_params; }
-
     ~ArmijoMethod() { delete params; }
 
     /// @brief Set params
@@ -40,15 +38,17 @@ public:
     /// @param d Direction for stepsize searching
     T search(JacobianType& d) override
     {
-        this->reset(params);
         // get params
         auto max_iterations = params->getMaxIterations();
         auto alpha = params->getIncreaseFactor();
         auto beta = params->getDecreaseFactor();
         auto rho = params->getRho();
         auto mu = params->getMu();
-        // initial stepsize
+
+        // initialization
+        this->reset(params);
         lambda = params->getInitLambdaFactor() * params->getUpperBound();
+
         while (true)
         {
             if (params->getIterationTimes() > max_iterations)
@@ -59,6 +59,7 @@ public:
             params->nextIteration();
             lhs = (*f)(f->getX() + lambda * d.transpose()) - f->getY();
             rhs1 = (rho * f->getJacobian() * d.transpose() * lambda)(0,0);
+
             // condition (1): f(x(k+1)) - f(x(k)) <= rho * J(x(k)) * lambda * d
             // condition (2): f(x(k+1)) - f(x(k)) >= (mu * rho) * J(x(k)) * lambda * d
             // if condition (1) is satisfied
@@ -72,16 +73,10 @@ public:
                     return lambda;
                 }
                 else
-                {
-                    // increase Stepsize
-                    lambda *= alpha;
-                }
+                    lambda *= alpha; // increase Stepsize
             }
             else
-            {
-                // decrease Stepsize
-                lambda *= beta;
-            }
+                lambda *= beta; // decrease Stepsize
         }
     }
 

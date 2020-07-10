@@ -38,6 +38,12 @@ public:
     /// @brief Adagrad optimization process
     InputType optimize() override
     {
+        // get params
+        auto max_iterations = params->getMaxIterations();
+        auto min_gradient = params->getMinGradient();
+        auto alpha = params->getAlpha();
+        auto epsilon = params->getEpsilon();
+
         this->printInitialConfigurations(params);
         if (params->isLogFile())
             this->writer.open("../data/Adagrad.txt");
@@ -46,14 +52,18 @@ public:
             this->printProcessInformation(params);
             if (this->writer.is_open())
                 this->writeInformation();
-            if (params->getIterationTimes() > params->getMaxIterations())
+            if (params->getIterationTimes() > max_iterations)
             {
                 std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
+                if (this->writer.is_open())
+                    this->writer.close();
                 return f->getX();
             }
-            if (f->getJacobian().norm() < params->getMinGradient())
+            if (f->getJacobian().norm() < min_gradient)
             {
                 this->printResult(params);
+                if (this->writer.is_open())
+                    this->writer.close();
                 return f->getX();
             }
             else
@@ -64,7 +74,7 @@ public:
                 for (int i = 0; i < InputType::RowsAtCompileTime; ++i)
                 {
                     s[i] += g[i] * g[i];
-                    x_next[i] = x[i] - params->getAlpha() / (params->getEpsilon() + sqrt(s[i])) * g[i];
+                    x_next[i] = x[i] - alpha / (epsilon + sqrt(s[i])) * g[i];
                 }
 
                 // update x
@@ -72,8 +82,6 @@ public:
                 params->nextIteration();
             }
         }
-        if (this->writer.is_open())
-            this->writer.close();
     }
 
 private:

@@ -42,6 +42,10 @@ public:
     /// @brief L-M optimization process
     InputType optimize() override
     {
+        // get params
+        auto min_delta_x = params->getMinDeltaX();
+        auto max_iterations = params->getMaxIterations();
+
         this->printInitialConfigurations(params);
         if (params->isLogFile())
             this->writer.open("../data/LevenbergMarquardt.txt");
@@ -50,7 +54,7 @@ public:
             this->printProcessInformation(params);
             if (this->writer.is_open())
                 this->writeInformation();
-            if (params->getIterationTimes() > params->getMaxIterations())
+            if (params->getIterationTimes() > max_iterations)
             {
                 std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
                 return f->getX();
@@ -59,7 +63,6 @@ public:
             {
                 x = f->getX();
                 g = f->getJacobian();
-
                 H_m = H(x) + epsilon * I;
 
                 if (!isPosDef()) // if H_m is not positive definite, increase damping factor
@@ -70,7 +73,7 @@ public:
 
                 delta_x = H_m.llt().solve(-g.transpose());
 
-                if (delta_x.norm() < params->getMinDeltaX())
+                if (delta_x.norm() < min_delta_x)
                 {
                     this->printResult(params);
                     return f->getX();

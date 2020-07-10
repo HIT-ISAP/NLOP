@@ -26,9 +26,9 @@ protected:
     using LineSearch::d;
 
 public:
-    /// @brief Constructors
+    /// @brief Constructor and Deconstructor
     ConjuateGradientOptimizer() {}
-    ~ConjuateGradientOptimizer() {}
+    ~ConjuateGradientOptimizer() { delete ss; }
 
     /// @brief Initialize
     void init(const InputType& initial, FunctorType* f,
@@ -50,49 +50,55 @@ public:
     /// @brief Conjuate Gradient optimization process
     InputType optimize() override
     {
+        // get params
+        auto min_gradient = params->getMinGradient();
+        auto max_iterations = params->getMaxIterations();
+
         this->printInitialConfigurations(params);
         if (params->isLogFile())
-        {
             this->writer.open("../data/conjuate gradient -- "
                               + params->StepsizeMethodTranslator(params->getStepsizeMethod()) + ".txt");
-        }
         while (true){
             this->updateValueAndJacobian();
             this->printProcessInformation(params);
             if (this->writer.is_open())
                 this->writeInformation();
-            if (params->getIterationTimes() > params->getMaxIterations())
+            if (params->getIterationTimes() > max_iterations)
             {
                 std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
+                if (this->writer.is_open())
+                    this->writer.close();
                 return f->getX();
             }
-            if (f->getJacobian().norm() < params->getMinGradient())
+            if (f->getJacobian().norm() < min_gradient)
             {
                 this->printResult(params);
+                if (this->writer.is_open())
+                    this->writer.close();
                 return f->getX();
             }
             else
             {
                 g = f->getJacobian();
 
-                // Compute beta
+                // compute beta
                 if (params->getIterationTimes() == 0)
                     beta = 0;
                 else
                     beta = (g*g.transpose()/(last_g*last_g.transpose()))(0,0);
 
-                // Update the direction of descent d
+                // update the direction of descent d
                 d = -g + beta*last_d;
 
-                // Search stepsize at the direction of d
+                // search stepsize at the direction of d
                 stepsize = ss->search(d);
 
+                // update x
                 f->setX(f->getX() + stepsize * d.transpose());
 
                 // save gradient and direction at last time
                 last_g = g;
                 last_d = d;
-
                 params->nextIteration();
             }
         }

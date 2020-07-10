@@ -19,22 +19,21 @@ protected:
     using JacobianType = typename FunctorType::JacobianType;
 
 public:
-    /// @brief Iteratively search the accurate optimal stepsize
+    /// @brief Iteratively search stepsize
+    /// @param d Direction for stepsize searching
     virtual T search(JacobianType& d) = 0;
-
-    /// @brief Initialize params
-    //void init(StepsizeSearchParamsBase* params) = 0;
 
     /// @brief Bind objective function
     void bind(FunctorType* f) { this->f = f; }
 
+    /// @brief Set params for stepsize searcher
     virtual void setParams(StepsizeSearchParamsBase* given_params) {}
 
+    /// @brief Reset stepsize searcher
     virtual void reset(StepsizeSearchParamsBase* params) = 0;
 
 protected:
-    FunctorType* f;                   // objective function
-    //StepsizeSearchParamsBase* params; // params of stepsize searcher
+    FunctorType* f;    // objective function
 };
 }
 

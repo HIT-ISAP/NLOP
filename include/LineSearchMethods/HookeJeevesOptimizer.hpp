@@ -26,8 +26,9 @@ protected:
     using LineSearch::d;
 
 public:
-    /// @brief Constructors
+    /// @brief Constructor and Deconstructor
     HookeJeevesOptimizer() {}
+    ~HookeJeevesOptimizer() {}
 
     /// @brief Initialize
     void init(const InputType& initial, FunctorType* f,
@@ -52,8 +53,6 @@ public:
         x = f->getX();
         y = x;
         step1();
-        if (this->writer.is_open())
-            this->writer.close();
     }
 
 private:
@@ -114,8 +113,10 @@ private:
             f->setX(x_next);
             this->updateValue();
             if (this->writer.is_open())
+            {
                 this->writeInformation();
-
+                this->writer.close();
+            }
             this->printResult(params);
             return x_next;
         }

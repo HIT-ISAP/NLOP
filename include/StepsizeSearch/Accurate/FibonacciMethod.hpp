@@ -21,13 +21,11 @@ protected:
     using AccurateBase::alpha;
     using AccurateBase::beta;
     using AccurateBase::lambda;
-
     using AccurateBase::f;
 
 public:
-    /// @brief Constructors
+    /// @brief Constructor and Deconstructor
     FibonacciMethod() { params = new AccurateSearchParams; }
-    //FibonacciMethod(StepsizeSearchParamsBase* given_params) { params = given_params; }
     ~FibonacciMethod() { delete params; }
 
     /// @brief Set params
@@ -48,30 +46,32 @@ public:
                   << mu << ", " << beta << "]" << std::endl;
     }
 
-    /// @brief search stepsize using
+    /// @brief Search stepsize using Fibonacci method
     T search(JacobianType& d) override
     {
+        // get params
+        auto max_iterations = params->getMaxIterations();
+        auto epsilon = params->getStepsizeAccuracy();
+
+        // initialization
         this->reset(params);
         n = params->getMaxIterations();
         t = fibonacci(n-1)/fibonacci(n);
         lambda = alpha + (1 - t) * (beta - alpha);
         mu = alpha + t * (beta - alpha);
+
         while (true)
         {
             //this->printProcess();
-            if (params->getIterationTimes() > params->getMaxIterations())
+            if (params->getIterationTimes() > max_iterations)
             {
                 std::cout << "Beyong max iteration times" << std::endl;
-                this->reset(params);
                 return (beta + alpha)/2;
             }
             // stopping condition: (alpha - beta) < epsilon
-            if (beta - alpha < params->getStepsizeAccuracy())
-            {
-                auto result = (beta + alpha)/2;
-                this->reset(params);
-                return result;
-            }
+            if (beta - alpha < epsilon)
+                return (beta + alpha)/2;
+
             params->nextIteration();
             // if f(x + lambda * d) > f(x + mu * d)
             if ((*f)(f->getX() + lambda * d.transpose()) > (*f)(f->getX() + mu * d.transpose()))

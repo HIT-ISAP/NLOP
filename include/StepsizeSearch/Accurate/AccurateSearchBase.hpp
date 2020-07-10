@@ -32,7 +32,7 @@ public:
 protected:
     T alpha;    // observation variables
     T beta;
-    T lambda;
+    T lambda;   // stepsize
 };
 
 }

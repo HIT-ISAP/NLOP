@@ -27,8 +27,9 @@ protected:
     using LineSearch::d;
 
 public:
-    /// @brief Constructors
+    /// @brief Constructor and Deconstructor
     BFGS_Optimizer() {}
+    ~BFGS_Optimizer() { delete ss; }
 
     /// @brief Initialize
     void init(const InputType& initial, FunctorType* f,
@@ -51,31 +52,39 @@ public:
     /// @brief BFGS optimization process
     InputType optimize() override
     {
+        // get params
+        auto max_iterations = params->getMaxIterations();
+        auto min_gradient = params->getMinGradient();
+
         this->printInitialConfigurations(params);
         if (params->isLogFile())
             this->writer.open("../data/BFGS -- "
-                              + params->StepsizeMethodTranslator(params->getStepsizeMethod()));
+                              + params->StepsizeMethodTranslator(params->getStepsizeMethod()) + ".txt");
         while (true) {
             this->updateValueAndJacobian();
             this->printProcessInformation(params);
             if (this->writer.is_open())
                 this->writeInformation();
-            if (params->getIterationTimes() > params->getMaxIterations())
+            if (params->getIterationTimes() > max_iterations)
             {
                 std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
+                if (this->writer.is_open())
+                    this->writer.close();
                 return f->getX();
             }
-            if (f->getJacobian().norm() < params->getMinGradient())
+            if (f->getJacobian().norm() < min_gradient)
             {
+                if (this->writer.is_open())
+                    this->writer.close();
                 this->printResult(params);
                 return f->getX();
             }
             else
             {
-                // Get gradient
+                // get gradient
                 g = f->getJacobian();
 
-                // Update H
+                // update H
                 if (params->getIterationTimes() == 0)
                     H.setIdentity(InputType::RowsAtCompileTime, InputType::RowsAtCompileTime);
                 else
@@ -85,13 +94,13 @@ public:
                             * (I - delta_g.transpose() * delta_x.transpose() / delta_g.dot(delta_x))
                             + delta_x * delta_x.transpose() / delta_g.dot(delta_x);
                 }
-                // Update direction
+                // update direction
                 d = -g * H.transpose();
 
-                // Search stepsize along the new direction
+                // search stepsize along the new direction
                 stepsize = ss->search(d);
 
-                // Update x
+                // update x
                 delta_x = stepsize * d.transpose();
                 f->setX(f->getX() + delta_x);
 
@@ -103,7 +112,6 @@ public:
                 params->nextIteration();
             }
         }
-        //this->writer.close();
     }
 
 private:

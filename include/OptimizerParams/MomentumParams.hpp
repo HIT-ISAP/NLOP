@@ -37,7 +37,7 @@ public:
         std::cout << "maximum iterations: " << max_iteration_times << "\n";
         std::cout << "verbosity: " << verbosityTranslator(verbosity) << "\n";
         std::cout << "gradient thresthold: " << min_gradient << "\n";
-        std::cout << "Learning rate: " << alpha << "\n";
+        std::cout << "learning rate: " << alpha << "\n";
         std::cout << "Momentum hyper-parameter: " << beta << "\n";
         std::cout << "*********************************************" << std::endl;
     }
@@ -50,8 +50,8 @@ public:
     double getBeta() const { return beta; }
 
 private:
-    double min_gradient; // Gradient threshold to stop the iterations
-    double alpha;        // Learning rate
+    double min_gradient; // gradient threshold to stop the iterations
+    double alpha;        // learning rate
     double beta;         // Momentum hyper-parameter
 };
 }

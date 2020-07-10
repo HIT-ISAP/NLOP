@@ -62,7 +62,7 @@ int main()
     //params->setVerbosity("DETAIL");
     //params->setMaxItertaions(1000);
     //params->setMinGradient(0.1);
-    //params->setStepsizeMethod("GOLDSTEIN");
+    //params->setStepsizeMethod("WOLFEPOWELL");
     //params->setStepsizeAccuracy(0.001);
     //params->setStepsizeIncreaseFactor(3);
     //params->setStepsizeDecreaseFactor(0.3);
@@ -94,12 +94,14 @@ int main()
 
     //AdagradOptimizer<RosenbrockFunctor> optimizer;
     //AdagradParams* params = new AdagradParams;
+    //params->setAlpha(0.15);
     //params->enableLog();
     //params->setVerbosity("DETAIL");
     //optimizer.init(initial_x, f, params);
 
     //RMSPropOptimizer<RosenbrockFunctor> optimizer;
     //RMSPropParams* params = new RMSPropParams;
+    //params->setAlpha(0.0005);
     //params->setVerbosity("DETAIL");
     //params->enableLog();
     //optimizer.init(initial_x, f, params);
@@ -120,6 +122,7 @@ int main()
     //HookeJeevesParams* params = new HookeJeevesParams;
     //params->setVerbosity("DETAIL");
     //params->enableLog();
+    //params->setInitStepsize(0.2);
     //optimizer.init(initial_x, f, params);
 
     //NewtonOptimizer<RosenbrockFunctor, RosenbrockHessianFunctor> optimizer;
@@ -146,8 +149,8 @@ int main()
     BFGS_Optimizer<RosenbrockFunctor> optimizer;
     BFGS_Params* params = new BFGS_Params;
     params->enableLog();
-    params->setVerbosity("DETAIL");
-    params->setStepsizeMethod("GOLDENSECTION");
+    //params->setVerbosity("DETAIL");
+    params->setStepsizeMethod("ARMIJO");
     optimizer.init(initial_x, f, params);
 
     optimizer.optimize();

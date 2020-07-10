@@ -26,9 +26,9 @@ protected:
     using LineSearch::d;
 
 public:
-    /// @brief Constructors
+    /// @brief Constructor and Deconstructor
     SteepestDescentOptimizer() {}
-    ~SteepestDescentOptimizer() {}
+    ~SteepestDescentOptimizer() { delete ss; }
 
     /// @brief Initialize SteepestDescentOptimizer
     void init(const InputType& initial, FunctorType* f,
@@ -46,6 +46,10 @@ public:
     /// @brief Steepest Descent optimization process
     InputType optimize() override
     {
+        // get params
+        auto min_gradient= params->getMinGradient();
+        auto max_iterations = params->getMaxIterations();
+
         this->printInitialConfigurations(params);
         if (params->isLogFile())
             this->writer.open("../data/steepest descent -- "
@@ -55,14 +59,18 @@ public:
             this->printProcessInformation(params);
             if (this->writer.is_open())
                 this->writeInformation();
-            if (params->getIterationTimes() > params->getMaxIterations())
+            if (params->getIterationTimes() > max_iterations)
             {
                 std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
+                if (this->writer.is_open())
+                    this->writer.close();
                 return f->getX();
             }
-            if (f->getJacobian().norm() < params->getMinGradient())
+            if (f->getJacobian().norm() < min_gradient)
             {
                 this->printResult(params);
+                if (this->writer.is_open())
+                    this->writer.close();
                 return f->getX();
             }
             else
@@ -78,8 +86,6 @@ public:
                 params->nextIteration();
             }
         }
-        if (this->writer.is_open())
-            this->writer.close();
     }
 private:
     SteepestDescentParams* params;

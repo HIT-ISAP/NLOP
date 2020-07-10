@@ -20,9 +20,8 @@ protected:
     using InaccurateBase::f;
 
 public:
+    /// @brief Constructor and Deconstructor
     WolfePowellMethod() { params = new WolfePowellParams; }
-    //WolfePowellMethod(WolfePowellParams* given_params) { params = given_params; }
-
     ~WolfePowellMethod() { delete params; }
 
     /// @brief Set params
@@ -41,19 +40,21 @@ public:
         adjac(x, v, jac);
     }
 
-    /// @brief Search inaccurate stepsize iteratively using Goldstein method
+    /// @brief Search inaccurate stepsize using W-P method
     /// @param d Direction for stepsize searching
     T search(JacobianType& d) override
     {
-        this->reset(params);
         // get params
         auto max_iteration_times = params->getMaxIterations();
         auto alpha = params->getIncreaseFactor();
         auto beta = params->getDecreaseFactor();
         auto rho = params->getRho();
         auto sigma = params->getSigma();
+
         // initial stepsize
+        this->reset(params);
         lambda = params->getInitLambdaFactor() * params->getUpperBound();
+
         while (true)
         {
             if (params->getIterationTimes() > max_iteration_times)
@@ -76,21 +77,12 @@ public:
                 rhs2 = (sigma * f->getJacobian() * d.transpose() * lambda)(0,0);
                 // if condition (1) and (2) are satisfied simultaneously, stop
                 if (lhs2 >= rhs2)
-                {
-                    this->reset(params);
                     return lambda;
-                }
                 else
-                {
-                    // Increase Stepsize
-                    lambda *= alpha;
-                }
+                    lambda *= alpha; // increase Stepsize
             }
             else
-            {
-                // Decrease Stepsize
-                lambda *= beta;
-            }
+                lambda *= beta; // decrease Stepsize
         }
     }
 

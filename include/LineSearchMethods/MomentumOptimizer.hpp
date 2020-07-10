@@ -22,6 +22,10 @@ protected:
     using LineSearch::f;
 
 public:
+    /// @brief Constructor and Deconstructor
+    MomentumOptimizer() {}
+    ~MomentumOptimizer() {}
+
     /// @brief Initialize
     void init(const InputType& initial, FunctorType* f,
               MomentumParams* params)
@@ -37,6 +41,12 @@ public:
     /// @brief Momentum optimization process
     InputType optimize() override
     {
+        // get params
+        auto max_iterations = params->getMaxIterations();
+        auto min_gradient = params->getMinGradient();
+        auto alpha = params->getAlpha();
+        auto beta = params->getBeta();
+
         this->printInitialConfigurations(params);
         if (params->isLogFile())
             this->writer.open("../data/Momentum.txt");
@@ -45,14 +55,18 @@ public:
             this->printProcessInformation(params);
             if (params->isLogFile())
                 this->writeInformation();
-            if (params->getIterationTimes() > params->getMaxIterations())
+            if (params->getIterationTimes() > max_iterations)
             {
                 std::cerr << "Beyond max iteration times, cannot convergence" << std::endl;
+                if (this->writer.is_open())
+                    this->writer.close();
                 return f->getX();
             }
-            if (f->getJacobian().norm() < params->getMinGradient())
+            if (f->getJacobian().norm() < min_gradient)
             {
                 this->printResult(params);
+                if (this->writer.is_open())
+                    this->writer.close();
                 return f->getX();
             }
             else
@@ -60,7 +74,7 @@ public:
                 g = f->getJacobian();
 
                 // compute momentum v
-                v = params->getBeta() * v_last - params->getAlpha() * g;
+                v = beta * v_last - alpha * g;
 
                 // update x
                 f->setX(f->getX() + v.transpose());
@@ -69,8 +83,6 @@ public:
                 params->nextIteration();
             }
         }
-        if (this->writer.is_open())
-            this->writer.close();
     }
 
 private:

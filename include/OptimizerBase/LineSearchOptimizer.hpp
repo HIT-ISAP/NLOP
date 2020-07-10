@@ -33,7 +33,7 @@ protected:
     using Base::f;
 
 public:
-    ~LineSearchOptimizer() { delete ss; }
+    ~LineSearchOptimizer() {}
 
     /// @brief Initialize stepsize search method
     void initStepsizeMethod(LineSearchParams* params)
