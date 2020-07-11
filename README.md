@@ -1,24 +1,24 @@
 NLOP - Non-Linear Optimization Library
 ===================================================
 
-# Introduction
+## Introduction
 
 NLOP is an open-source C++ template library for non-linear optimization.
 
 
-# Motivation
+## Motivation
 
 I developed this project mainly because of my interest in convex optimization.
 I hope this will be useful for other convex optimization researchers for learning and teaching.
 
-# Features
+## Features
 
 - Thanks to the template programming, users can customize the data type to trade-off between speed and precision
 - Autodiff function is provided, users don't have to give Jacobian formula manually
 - Line search methods can be combined with step search method flexibly
 - Users can enable log to have the optimization process information saved in an txt file, so that they can be used for visualization (a python script example is provided)
 
-# Optimization method list
+## Optimization method list
 
 ### Linesearch methods
 - Hooke & Jeeves's method
@@ -39,24 +39,23 @@ I hope this will be useful for other convex optimization researchers for learnin
 ### Trust region methods
 - Levenberg-Marquardt method
 
-Stepsize searching method list
-------------------------------
+## Stepsize searching method list
 
-## Accurate searching methods
+### Accurate searching methods
 - Golden section method
 - Fibonacci method
 - Dichotomous method
 
-## Inaccurate searching methods
+### Inaccurate searching methods
 - Armijo method
 - Goldstein method
 - Wolfe-Powell method
 
-# Requirements
+## Requirements
 
 - [cmake](http://www.cmake.org/)
 - [Eigen3](http://eigen.tuxfamily.org)
 
-# Contacts
+## Contacts
 --------
 Please use Github issues to report bugs. If you have ang question or advice, please feel free to contact [Shuang Guo](mailto:guoshuangSLAM@outlook.com).
