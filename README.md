@@ -20,10 +20,10 @@ I hope this will be useful for other convex optimization researchers for learnin
 
 ## Usage
 
-` mkdir build `
-` cd build `
-` cmake .. `
-` make -j4 `
+` mkdir build `  
+` cd build `  
+` cmake .. `  
+` make -j4 `  
 ` ./RosenbrockExample `
 
 ## Optimization method list
