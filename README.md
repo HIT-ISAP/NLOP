@@ -1,4 +1,4 @@
-NLOP - Non-Linear Optimization Library
+NLOP - Non-Linear OPtimization
 ===================================================
 
 ## Introduction
