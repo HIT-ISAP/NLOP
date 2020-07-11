@@ -18,6 +18,15 @@ I hope this will be useful for other convex optimization researchers for learnin
 - Line search methods can be combined with step search method flexibly
 - Users can enable log to have the optimization process information saved in an txt file, so that they can be used for visualization (a python script example is provided)
 
+## Usage
+
+` mkdir build
+  cd build
+  cmake ..
+  make -j4
+  ./RosenbrockExample
+`
+
 ## Optimization method list
 
 ### Linesearch methods
