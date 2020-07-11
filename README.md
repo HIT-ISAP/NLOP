@@ -57,5 +57,5 @@ I hope this will be useful for other convex optimization researchers for learnin
 - [Eigen3](http://eigen.tuxfamily.org)
 
 ## Contacts
---------
-Please use Github issues to report bugs. If you have ang question or advice, please feel free to contact [Shuang Guo](mailto:guoshuangSLAM@outlook.com).
+
+Please use Github issues to report bugs. If you have any question or advice, please feel free to contact [Shuang Guo](mailto:guoshuangSLAM@outlook.com).
