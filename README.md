@@ -20,7 +20,7 @@ I hope this will be useful for other convex optimization researchers for learnin
 
 # Optimization method list
 
-## Linesearch methods
+### Linesearch methods
 - Hooke & Jeeves's method
 - steepest descent method
 - conjuate gradient method
@@ -31,12 +31,12 @@ I hope this will be useful for other convex optimization researchers for learnin
 - AdaDelta
 - Adam
 
-## Newton's and quasi-Newton methods
+### Newton's and quasi-Newton methods
 - Newton's method
 - DFP
 - BFGS
 
-## Trust region methods
+### Trust region methods
 - Levenberg-Marquardt method
 
 Stepsize searching method list
