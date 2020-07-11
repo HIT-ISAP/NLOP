@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(ConvexOptimization)
+project(NLOP)
 
 set(CMAKE_BUILD_TYPE "Release")
 set(CMAKE_CXX_FLAGS "-std=c++11 -O0")
